@@ -2,6 +2,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/theme/theme-provider";
 import SmoothScroll from "./components/smooth-scroll";
 import ConditionalLayout from "./components/conditional-layout";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function RootLayout({
   children,
@@ -28,6 +29,7 @@ export default function RootLayout({
             <SmoothScroll>{children}</SmoothScroll>
           </ConditionalLayout>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
