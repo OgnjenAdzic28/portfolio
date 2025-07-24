@@ -43,7 +43,7 @@ export function SocialDock() {
     {
       id: "twitter",
       icon: <FaXTwitter />,
-      tooltip: "Twitter",
+      tooltip: "X",
       onClick: () => window.open("https://x.com/oginjo28", "_blank"),
       isSpecial: false,
     },
