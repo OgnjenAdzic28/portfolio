@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import Footer from "../components/nav/Footer";
 import Image from "next/image";
+import Footer from "../components/nav/Footer";
 
 export default function AboutPage() {
   // Animation variants for the headline

@@ -1,8 +1,8 @@
-import { getPostBySlug, getAllPosts } from "@/lib/blog";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import BlogPostContent from "./blog-post-content";
+import { notFound } from "next/navigation";
 import Footer from "@/app/components/nav/Footer";
+import { getAllPosts, getPostBySlug } from "@/lib/blog";
+import BlogPostContent from "./blog-post-content";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;

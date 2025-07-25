@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
   const [scrollState, setScrollState] = useState<
@@ -89,7 +89,7 @@ export default function Header() {
         delay: 0.2, // Small delay like social dock on mount
         layout: { type: "spring", stiffness: 800, damping: 60 }, // Springy layout transition
       }}
-      className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 backdrop-blur-md bg-background/80 rounded-[30px] p-2 cursor-pointer"
+      className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 backdrop-blur-md bg-background/80 rounded-[30px] p-2 cursor-pointer md:cursor-default"
       style={{
         width: isMobile && isScrolled ? "65%" : "95%",
         maxWidth: isScrolled ? "400px" : "790px",

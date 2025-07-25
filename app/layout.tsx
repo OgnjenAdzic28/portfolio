@@ -1,8 +1,8 @@
 import "./globals.css";
-import { ThemeProvider } from "./components/theme/theme-provider";
-import SmoothScroll from "./components/smooth-scroll";
-import ConditionalLayout from "./components/conditional-layout";
 import { Analytics } from "@vercel/analytics/next";
+import ConditionalLayout from "./components/conditional-layout";
+import SmoothScroll from "./components/smooth-scroll";
+import { ThemeProvider } from "./components/theme/theme-provider";
 
 export default function RootLayout({
   children,

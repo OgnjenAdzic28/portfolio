@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import Link from "next/link";
-import { formatDate } from "@/lib/utils";
-import React from "react";
 import Image from "next/image";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import Link from "next/link";
+import type React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatDate } from "@/lib/utils";
 import EnhancedContent from "./enhanced-content";
 import MarkdownRenderer from "./markdown-renderer";
 import "../blog-styles.css";

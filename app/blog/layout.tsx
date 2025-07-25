@@ -2,25 +2,27 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blog - Ognjen Adzic",
-  description: "Thoughts on building tools, entrepreneurship, and figuring things out as I go. Read about my journey with ALFRED, Pingless, and other projects.",
+  description:
+    "Thoughts on building tools, entrepreneurship, and figuring things out as I go. Read about my journey with ALFRED, Pingless, and other projects.",
   keywords: [
     "blog",
     "development",
-    "entrepreneurship", 
+    "entrepreneurship",
     "ALFRED",
     "Pingless",
     "web development",
     "AI",
     "desktop apps",
     "startup",
-    "technology"
+    "technology",
   ],
   authors: [{ name: "Ognjen Adzic" }],
   creator: "Ognjen Adzic",
   publisher: "Ognjen Adzic",
   openGraph: {
     title: "Blog - Ognjen Adzic",
-    description: "Thoughts on building tools, entrepreneurship, and figuring things out as I go.",
+    description:
+      "Thoughts on building tools, entrepreneurship, and figuring things out as I go.",
     url: "https://ognjen.dev/blog",
     siteName: "Ognjen Adzic",
     type: "website",
@@ -28,8 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blog - Ognjen Adzic", 
-    description: "Thoughts on building tools, entrepreneurship, and figuring things out as I go.",
+    title: "Blog - Ognjen Adzic",
+    description:
+      "Thoughts on building tools, entrepreneurship, and figuring things out as I go.",
     creator: "@ognjen",
   },
   robots: {
@@ -55,9 +58,7 @@ export default function BlogLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <main className="flex-1 min-h-screen">
-        {children}
-      </main>
+      <main className="flex-1 min-h-screen">{children}</main>
     </div>
   );
 }

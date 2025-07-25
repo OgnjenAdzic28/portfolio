@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About - Ognjen Adzic",
-  description: "I'm a developer and entrepreneur who builds out of curiosity, frustration, and the need to make things work better. Currently building ALFRED and previously founded Pingless.",
+  description:
+    "I'm a developer and entrepreneur who builds out of curiosity, frustration, and the need to make things work better. Currently building ALFRED and previously founded Pingless.",
   keywords: [
     "about",
     "developer",
-    "entrepreneur", 
+    "entrepreneur",
     "ALFRED",
     "Pingless",
     "web development",
@@ -14,14 +15,15 @@ export const metadata: Metadata = {
     "desktop apps",
     "startup founder",
     "technology",
-    "portfolio"
+    "portfolio",
   ],
   authors: [{ name: "Ognjen Adzic" }],
   creator: "Ognjen Adzic",
   publisher: "Ognjen Adzic",
   openGraph: {
     title: "About - Ognjen Adzic",
-    description: "Developer and entrepreneur building ALFRED and previously founded Pingless. Figuring it out as I go.",
+    description:
+      "Developer and entrepreneur building ALFRED and previously founded Pingless. Figuring it out as I go.",
     url: "https://ognjen.dev/about",
     siteName: "Ognjen Adzic",
     type: "profile",
@@ -29,8 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About - Ognjen Adzic", 
-    description: "Developer and entrepreneur building ALFRED and previously founded Pingless. Figuring it out as I go.",
+    title: "About - Ognjen Adzic",
+    description:
+      "Developer and entrepreneur building ALFRED and previously founded Pingless. Figuring it out as I go.",
     creator: "@ognjen",
   },
   robots: {
@@ -56,9 +59,7 @@ export default function AboutLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <main className="flex-1 min-h-screen">
-        {children}
-      </main>
+      <main className="flex-1 min-h-screen">{children}</main>
     </div>
   );
 }

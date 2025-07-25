@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
-import Header from "./components/nav/Header";
+import Link from "next/link";
 import Footer from "./components/nav/Footer";
+import Header from "./components/nav/Header";
 
 export default function NotFound() {
   // Animation variants for the content

@@ -1,5 +1,5 @@
-import { getAllPosts } from "@/lib/blog";
 import Footer from "@/app/components/nav/Footer";
+import { getAllPosts } from "@/lib/blog";
 import BlogContent from "./blog-content";
 
 export default async function BlogPage() {

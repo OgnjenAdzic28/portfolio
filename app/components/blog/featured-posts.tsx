@@ -1,5 +1,5 @@
-import { getFeaturedPosts } from "@/lib/blog";
 import Link from "next/link";
+import { getFeaturedPosts } from "@/lib/blog";
 import { formatDate } from "@/lib/utils";
 
 export default async function FeaturedPosts() {

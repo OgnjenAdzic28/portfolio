@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type Lenis from 'lenis';
+import type Lenis from "lenis";
+import { useEffect, useState } from "react";
 
 /**
  * Hook to access the global Lenis instance

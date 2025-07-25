@@ -15,7 +15,7 @@ export default function EnhancedContent({ children }: EnhancedContentProps) {
 
     // Find all pre elements (code blocks) and add copy buttons
     const preElements = contentRef.current.querySelectorAll("pre");
-    
+
     preElements.forEach((pre) => {
       // Skip if already has a copy button
       if (pre.parentElement?.classList.contains("code-block-wrapper")) return;
@@ -26,10 +26,10 @@ export default function EnhancedContent({ children }: EnhancedContentProps) {
       // Create wrapper div
       const wrapper = document.createElement("div");
       wrapper.className = "code-block-wrapper relative group";
-      
+
       // Insert wrapper before pre element
       pre.parentNode?.insertBefore(wrapper, pre);
-      
+
       // Move pre into wrapper
       wrapper.appendChild(pre);
 
@@ -47,7 +47,9 @@ export default function EnhancedContent({ children }: EnhancedContentProps) {
 
     // Cleanup function
     return () => {
-      const wrappers = contentRef.current?.querySelectorAll(".code-block-wrapper");
+      const wrappers = contentRef.current?.querySelectorAll(
+        ".code-block-wrapper"
+      );
       wrappers?.forEach((wrapper) => {
         const pre = wrapper.querySelector("pre");
         if (pre && wrapper.parentNode) {
@@ -56,7 +58,7 @@ export default function EnhancedContent({ children }: EnhancedContentProps) {
         }
       });
     };
-  }, [children]);
+  }, []);
 
   return (
     <div ref={contentRef} className="enhanced-content">

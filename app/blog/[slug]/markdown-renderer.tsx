@@ -1,21 +1,24 @@
 "use client";
 
+import Image from "next/image";
+import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import { ReactNode, isValidElement } from "react";
+import remarkGfm from "remark-gfm";
 import CopyButton from "./copy-button";
 
 interface MarkdownRendererProps {
   content: string;
 }
 
-// Custom code block component with copy button
-function CodeBlock({ children, className, ...props }: any) {
-  const match = /language-(\w+)/.exec(className || "");
-  const language = match ? match[1] : "";
+interface CodeBlockProps {
+  children?: ReactNode;
+  className?: string;
+}
 
+// Custom code block component with copy button
+function CodeBlock({ children, className, ...props }: CodeBlockProps) {
   // Extract text content for copying
   const getTextContent = (node: ReactNode): string => {
     if (typeof node === "string") return node;
@@ -209,10 +212,12 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           <hr className="border-border my-8 border-t" {...props} />
         ),
         // Image styling
-        img: ({ src, alt, ...props }) => (
-          <img
-            src={src}
-            alt={alt}
+        img: ({ src, alt, width, height, ...props }) => (
+          <Image
+            src={typeof src === "string" ? src : ""}
+            alt={alt || ""}
+            width={typeof width === "number" ? width : 800}
+            height={typeof height === "number" ? height : 400}
             className="rounded-lg border border-border shadow-sm my-6 max-w-full h-auto"
             {...props}
           />

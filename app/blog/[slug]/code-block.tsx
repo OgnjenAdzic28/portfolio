@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, isValidElement } from "react";
+import { isValidElement, type ReactNode } from "react";
 import CopyButton from "./copy-button";
 
 interface CodeBlockProps {

@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import PostCard from "@/app/components/ui/post-card";
 import Link from "next/link";
+import PostCard from "@/app/components/ui/post-card";
 import type { BlogPost } from "@/lib/blog";
 
 interface BlogClientProps {

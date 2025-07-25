@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import BlogSection from "./components/home/blog";
 import HeroSection from "./components/home/hero";
 import VenturesSection from "./components/home/ventures";
-import BlogSection from "./components/home/blog";
 import Footer from "./components/nav/Footer";
 
 export const metadata: Metadata = {
