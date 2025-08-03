@@ -44,7 +44,7 @@ export function SocialDock() {
       id: "twitter",
       icon: <FaXTwitter />,
       tooltip: "X",
-      onClick: () => window.open("https://x.com/oginjo28", "_blank"),
+      onClick: () => window.open("https://x.com/OgnjenAdzic", "_blank"),
       isSpecial: false,
     },
     {
@@ -75,7 +75,7 @@ export function SocialDock() {
       id: "github",
       icon: <FaGithub />,
       tooltip: "GitHub",
-      onClick: () => window.open("https://github.com/oginjo28", "_blank"),
+      onClick: () => window.open("https://github.com/OgnjenAdzic28", "_blank"),
       isSpecial: false,
     },
     {
