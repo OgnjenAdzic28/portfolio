@@ -88,19 +88,19 @@ export default function AboutPage() {
 
               <p>
                 Right now I'm building{" "}
-                <span className="text-foreground font-medium">ALFRED</span> — a
-                desktop AI agent designed to feel more like a modern butler than
-                a typical app. Subtle, helpful, and not trying too hard to be
-                "smart." Just something you'd actually want running on your
-                machine every day.
+                <span className="text-foreground font-medium">Cobpot</span> — an
+                AI chief of staff that learns from your patterns and handles
+                tasks proactively. It gets better the longer you use it,
+                handling routine work on your behalf so you can focus on what
+                matters.
               </p>
 
               <p>
                 Before that, I started{" "}
-                <span className="text-foreground font-medium">Pingless</span>, a
-                web development agency focused on designing fast, clean,
-                no-bullshit websites for businesses who care about how things
-                work as much as how they look.
+                <span className="text-foreground font-medium">Pingless</span> —
+                we build web, SaaS, and AI apps that actually work. From
+                high-performance landing pages to full-scale systems, we deliver
+                software that's fast, reliable, and built for growth.
               </p>
 
               <p>

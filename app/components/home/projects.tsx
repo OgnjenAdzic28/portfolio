@@ -3,9 +3,9 @@
 import { motion } from "motion/react";
 import VentureCard from "@/app/components/ui/venture-card";
 
-export default function VenturesSection() {
+export default function ProjectsSection() {
   // Simple title
-  const titleText = "Ventures";
+  const titleText = "Projects";
 
   // Animation variants for title
   const titleVariants = {
@@ -67,17 +67,18 @@ export default function VenturesSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/ALFRED-LOGO-FULL.svg"
-                cardImageAlt="ALFRED Logo"
-                title="ALFRED"
-                subtitle="Redefining Assistance with the First True AI Butler"
+                cardImage="/projects/cobpot.svg"
+                cardImageAlt="Cobpot Logo"
+                title="Cobpot"
+                subtitle="Replacing your chief of staff."
                 bgImage="/projects/nnnoise.svg"
                 bgImageOpacityClass="lg:opacity-60 opacity-10"
                 bgImageInvert={true}
+                cardImageInvert={false}
                 bgImageObjectPosition="center"
                 isPrimary={true}
                 hoverGradientColor="#f5f5f5"
-                href="https://tryalfred.app"
+                href="https://cobpot.com"
               />
             </motion.div>
 
@@ -99,12 +100,11 @@ export default function VenturesSection() {
                 cardImageWidth="w-22"
                 cardImageAlt="Pingless Logo"
                 title="Pingless"
-                subtitle="Websites That Actually Work."
+                subtitle="Apps that actually work."
                 bgImage="/projects/Pingless-banner.png"
-                bgImageInvert={true}
                 bgImageObjectPosition="right top"
                 isPrimary={false}
-                hoverGradientColor="#00be89"
+                hoverGradientColor="#1e90ff"
                 href="https://pingless.dev"
               />
             </motion.div>
@@ -123,7 +123,7 @@ export default function VenturesSection() {
               <VentureCard
                 cardImage="/projects/ArchiStella.svg"
                 cardImageObjectFit="contain"
-                cardImageWidth="w-32"
+                cardImageWidth="w-42"
                 cardImageAlt="ArchiStella Logo"
                 title="ArchiStella"
                 subtitle="B2B marketplace for the maritime industry."
@@ -149,7 +149,7 @@ export default function VenturesSection() {
                 cardImage="/projects/maritime@penn.svg"
                 cardImageInvert={false}
                 cardImageObjectFit="contain"
-                cardImageWidth="w-28"
+                cardImageWidth="w-32"
                 cardImageAlt="Maritime@Penn Logo"
                 title="Maritime@Penn"
                 subtitle="Club connecting The University of Pennsylvania with the maritime industry."
@@ -158,6 +158,58 @@ export default function VenturesSection() {
                 bgImageOpacityClass="lg:opacity-50 opacity-10"
                 href="https://pennmaritime.club/"
                 isPrimary={false}
+              />
+            </motion.div>
+
+            {/* FIFA Momentum Tracker Card */}
+            <motion.div
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                duration: 0.6,
+                delay: 0.5,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <VentureCard
+                cardImage="/projects/EA_Sports_FC_24_logo.svg"
+                cardImageAlt="FIFA Momentum Tracker"
+                cardImageObjectFit="contain"
+                cardImageWidth="w-24"
+                title="FIFA Momentum Tracker"
+                subtitle="Cracking FIFA's dynamic difficulty algorithms through ML pattern recognition."
+                bgImage="/projects/eafcbanner.svg"
+                bgImageOpacityClass="lg:opacity-30 opacity-10"
+                isPrimary={false}
+                hoverGradientColor="#22c55e"
+                href="https://github.com/OgnjenAdzic28/fifa-momentum-tracker"
+              />
+            </motion.div>
+
+            {/* X Post Scraper Extension Card */}
+            <motion.div
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                duration: 0.6,
+                delay: 0.6,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <VentureCard
+                cardImage="/projects/x-icon.svg"
+                cardImageAlt="X Post Scraper Extension"
+                cardImageObjectFit="contain"
+                cardImageWidth="w-16"
+                title="X Post Scraper"
+                subtitle="Chrome extension for configurable X post scraping to JSON."
+                bgImage="/projects/oooscillate.svg"
+                bgImageOpacityClass="lg:opacity-40 opacity-10"
+                isPrimary={false}
+                hoverGradientColor="#f5f5f5"
+                href="https://github.com/OgnjenAdzic28/x-post-scraper-extension"
               />
             </motion.div>
           </div>

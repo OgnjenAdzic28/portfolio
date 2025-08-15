@@ -27,7 +27,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     .map((post) => ({
       slug: post.slug,
       title: post.entry.title,
-      publishedDate: post.entry.publishedDate!,
+      publishedDate: post.entry.publishedDate || new Date().toISOString(),
       excerpt: post.entry.excerpt || "",
       readTime: post.entry.readTime || 5,
       featured: post.entry.featured,

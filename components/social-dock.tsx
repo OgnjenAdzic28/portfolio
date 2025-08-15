@@ -1,20 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import {
-  FaXTwitter,
-  FaThreads,
-  FaLinkedinIn,
-  FaInstagram,
-  FaGithub,
-  FaEnvelope,
-} from "react-icons/fa6";
-import { FaHome } from "react-icons/fa";
-import { Sun, Moon, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
 import { motion, useMotionValue } from "motion/react";
-import { DockIcon } from "@/components/magicui/dock";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { FaHome } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaGithub,
+  FaInstagram,
+  FaLinkedinIn,
+  FaThreads,
+  FaXTwitter,
+} from "react-icons/fa6";
+import { DockIcon } from "@/components/magicui/dock";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -296,6 +297,7 @@ export function SocialDock() {
             <div className="flex items-center justify-center gap-1 mt-1">
               {Array.from({ length: totalPages }).map((_, index) => (
                 <motion.button
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Page indicators are stable and don't reorder
                   key={index}
                   className={`w-1 h-1 rounded-full transition-colors ${
                     index === currentPage
@@ -313,6 +315,7 @@ export function SocialDock() {
       ) : (
         // Desktop Layout
         <div
+          role="toolbar"
           className="backdrop-blur-md rounded-full bg-background/60 shadow-2xl p-2 flex items-center gap-2"
           style={{ width: "fit-content", height: "fit-content" }}
           onMouseMove={(e) => {
