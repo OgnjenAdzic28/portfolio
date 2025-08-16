@@ -79,7 +79,6 @@ export default function Header() {
   return (
     <motion.header
       key={scrollState} // Force re-render when scroll state changes
-      layout // Enable layout animations like social dock
       variants={headerVariants}
       initial={scrollState === "top" ? "hiddenTop" : "hiddenScrolled"}
       animate="visible"
@@ -87,9 +86,8 @@ export default function Header() {
         duration: 0.4, // Match social dock duration
         ease: [0.16, 1, 0.3, 1], // Same easing as social dock
         delay: 0.2, // Small delay like social dock on mount
-        layout: { type: "spring", stiffness: 800, damping: 60 }, // Springy layout transition
       }}
-      className={`fixed top-6 left-1/2 transform ${isScrolled ? "px-2" : "lg:px-16 px-8"} -translate-x-1/2 z-50 backdrop-blur-md bg-background/80 rounded-[30px] p-2 cursor-pointer md:cursor-default`}
+      className={`fixed top-6 left-1/2 transform ${isScrolled ? "px-2" : "lg:px-16 px-8"} -translate-x-1/2 z-50 backdrop-blur-md bg-background/80 rounded-[30px] p-2 cursor-pointer md:cursor-default transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]`}
       style={{
         width: isMobile && isScrolled ? "65%" : "100%",
         maxWidth: isScrolled ? "400px" : "900px",

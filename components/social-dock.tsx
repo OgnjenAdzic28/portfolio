@@ -8,7 +8,6 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { FaHome } from "react-icons/fa";
 import {
-  FaEnvelope,
   FaGithub,
   FaInstagram,
   FaLinkedinIn,
@@ -77,13 +76,6 @@ export function SocialDock() {
       icon: <FaGithub />,
       tooltip: "GitHub",
       onClick: () => window.open("https://github.com/OgnjenAdzic28", "_blank"),
-      isSpecial: false,
-    },
-    {
-      id: "email",
-      icon: <FaEnvelope />,
-      tooltip: "Email",
-      onClick: () => window.open("mailto:oginjo28@gmail.com", "_blank"),
       isSpecial: false,
     },
     {
@@ -339,7 +331,9 @@ export function SocialDock() {
                 {item.icon}
               </DockIcon>
               {/* Add separators after home button and before theme button */}
-              {(item.id === "home" || item.id === "email") && <DockSeparator />}
+              {(item.id === "home" || item.id === "github") && (
+                <DockSeparator />
+              )}
             </div>
           ))}
         </div>
