@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Blog - Ognjen Adzic",
   description:
-    "Thoughts on building tools, entrepreneurship, and figuring things out as I go. Read about my journey with Cobpot, Pingless, and other projects.",
+    "Thoughts on building tools, entrepreneurship, and figuring things out as I go. Read about my journey with PennyOne, Pingless, and other projects.",
   keywords: [
     "blog",
     "development",
     "entrepreneurship",
-    "Cobpot",
+    "PennyOne",
     "Pingless",
     "web development",
     "AI",

@@ -55,7 +55,7 @@ export default function ProjectsSection() {
 
           {/* Cards Container */}
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 mt-4">
-            {/* ALFRED Card */}
+            {/* PennyOne Card */}
             <motion.div
               variants={cardVariants}
               initial="hidden"
@@ -67,18 +67,18 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/cobpot.svg"
-                cardImageAlt="Cobpot Logo"
-                title="Cobpot"
+                cardImage="/projects/PennyOne/PennyOneWordmarkDark.svg"
+                cardImageDark="/projects/PennyOne/PennyOneWordmarkLight.svg"
+                cardImageAlt="PennyOne Logo"
+                title="PennyOne"
                 subtitle="Replacing your chief of staff."
-                bgImage="/projects/nnnoise.svg"
+                bgImage="/projects/PennyOne/PennyOneBanner.png"
                 bgImageOpacityClass="lg:opacity-60 opacity-10"
                 bgImageInvert={true}
                 cardImageInvert={false}
-                bgImageObjectPosition="center"
+                bgImageObjectPosition="right top"
                 isPrimary={true}
                 hoverGradientColor="#f5f5f5"
-                href="https://cobpot.com"
               />
             </motion.div>
 
@@ -94,14 +94,14 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/pingless.svg"
+                cardImage="/projects/Pingless/pingless.svg"
                 cardImageInvert={false}
                 cardImageObjectFit="contain"
                 cardImageWidth="w-22"
                 cardImageAlt="Pingless Logo"
                 title="Pingless"
                 subtitle="Apps that actually work."
-                bgImage="/projects/Pingless-banner.png"
+                bgImage="/projects/Pingless/Pingless-banner.png"
                 bgImageObjectPosition="right top"
                 isPrimary={false}
                 hoverGradientColor="#1e90ff"
@@ -121,13 +121,13 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/ArchiStella.svg"
+                cardImage="/projects/ArchiStella/ArchiStella.svg"
                 cardImageObjectFit="contain"
                 cardImageWidth="w-42"
                 cardImageAlt="ArchiStella Logo"
                 title="ArchiStella"
                 subtitle="B2B marketplace for the maritime industry."
-                bgImage="/projects/ffflux.svg"
+                bgImage="/projects/ArchiStella/ffflux.svg"
                 bgImageObjectPosition="center"
                 bgImageWidth="w-full lg:w-[60%]"
                 bgImageOpacityClass="lg:opacity-50 opacity-10"
@@ -146,14 +146,14 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/maritime@penn.svg"
+                cardImage="/projects/Maritime@Penn/maritime@penn.svg"
                 cardImageInvert={false}
                 cardImageObjectFit="contain"
                 cardImageWidth="w-32"
                 cardImageAlt="Maritime@Penn Logo"
                 title="Maritime@Penn"
                 subtitle="Club connecting The University of Pennsylvania with the maritime industry."
-                bgImage="/projects/wwwatercolor.webp"
+                bgImage="/projects/Maritime@Penn/wwwatercolor.webp"
                 bgImageObjectPosition="center"
                 bgImageOpacityClass="lg:opacity-50 opacity-10"
                 href="https://pennmaritime.club/"
@@ -173,13 +173,13 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/EA_Sports_FC_24_logo.svg"
+                cardImage="/projects/EAFC-Momentum-Tracker/EA_Sports_FC_24_logo.svg"
                 cardImageAlt="FIFA Momentum Tracker"
                 cardImageObjectFit="contain"
                 cardImageWidth="w-24"
                 title="FIFA Momentum Tracker"
                 subtitle="Cracking FIFA's dynamic difficulty algorithms through ML pattern recognition."
-                bgImage="/projects/eafcbanner.svg"
+                bgImage="/projects/EAFC-Momentum-Tracker/eafcbanner.svg"
                 bgImageOpacityClass="lg:opacity-30 opacity-10"
                 isPrimary={false}
                 hoverGradientColor="#22c55e"
@@ -199,13 +199,13 @@ export default function ProjectsSection() {
               }}
             >
               <VentureCard
-                cardImage="/projects/x-icon.svg"
+                cardImage="/projects/X-Post-Scraper/x-icon.svg"
                 cardImageAlt="X Post Scraper Extension"
                 cardImageObjectFit="contain"
                 cardImageWidth="w-16"
                 title="X Post Scraper"
                 subtitle="Chrome extension for configurable X post scraping to JSON."
-                bgImage="/projects/oooscillate.svg"
+                bgImage="/projects/X-Post-Scraper/oooscillate.svg"
                 bgImageOpacityClass="lg:opacity-40 opacity-10"
                 isPrimary={false}
                 hoverGradientColor="#f5f5f5"

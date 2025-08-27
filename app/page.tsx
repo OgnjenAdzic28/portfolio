@@ -7,7 +7,7 @@ import Footer from "./components/nav/Footer";
 export const metadata: Metadata = {
   title: "Ognjen Adzic - Portfolio",
   description:
-    "Currently working on Cobpot, Pingless, and a few ideas still under the surface.",
+    "Currently working on PennyOne, Pingless, and a few ideas still under the surface.",
 };
 
 export default function Home() {

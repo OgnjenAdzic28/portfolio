@@ -108,7 +108,7 @@ export default function Header() {
               onClick={(e) => e.stopPropagation()} // Prevent header expansion when clicking avatar
             >
               <Avatar className="size-8">
-                <AvatarImage src="/ognjen.png" alt="Ognjen Adzic" />
+                <AvatarImage src="/me/ognjen.png" alt="Ognjen Adzic" />
                 <AvatarFallback>OA</AvatarFallback>
               </Avatar>
               <motion.span

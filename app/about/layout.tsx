@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About - Ognjen Adzic",
   description:
-    "I'm a developer and entrepreneur who builds out of curiosity, frustration, and the need to make things work better. Currently building Cobpot and previously founded Pingless.",
+    "I'm a developer and entrepreneur who builds out of curiosity, frustration, and the need to make things work better. Currently building PennyOne and previously founded Pingless.",
   keywords: [
     "about",
     "developer",
     "entrepreneur",
-    "Cobpot",
+    "PennyOne",
     "Pingless",
     "web development",
     "AI agent",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "About - Ognjen Adzic",
     description:
-      "Developer and entrepreneur building Cobpot and previously founded Pingless. Figuring it out as I go.",
+      "Developer and entrepreneur building PennyOne and previously founded Pingless. Figuring it out as I go.",
     url: "https://ognjen.dev/about",
     siteName: "Ognjen Adzic",
     type: "profile",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About - Ognjen Adzic",
     description:
-      "Developer and entrepreneur building Cobpot and previously founded Pingless. Figuring it out as I go.",
+      "Developer and entrepreneur building PennyOne and previously founded Pingless. Figuring it out as I go.",
     creator: "@ognjen",
   },
   robots: {

@@ -40,6 +40,7 @@ import { BorderBeam } from "@/components/magicui/border-beam";
 interface VentureCardProps {
   // Card content
   cardImage: string;
+  cardImageDark?: string; // Optional dark mode image
   cardImageAlt?: string;
   title: string;
   subtitle: string;
@@ -88,6 +89,7 @@ interface VentureCardProps {
 
 export default function VentureCard({
   cardImage,
+  cardImageDark,
   cardImageAlt = "Card image",
   title,
   subtitle,
@@ -235,13 +237,34 @@ export default function VentureCard({
           <div
             className={`w-full ${cardImageHeight} relative px-6.5 pt-6.5 rounded-lg overflow-hidden flex items-center justify-between`}
           >
-            <Image
-              src={cardImage}
-              alt={cardImageAlt}
-              width={112} // Default width equivalent to w-36
-              height={32} // Default height equivalent to h-12
-              className={`${cardImageInvert ? "dark:invert invert-0" : "dark:invert-0 invert"} ${cardImageWidth} ${cardImageHeight} object-${cardImageObjectFit}`}
-            />
+            {cardImageDark ? (
+              <>
+                {/* Light mode image */}
+                <Image
+                  src={cardImage}
+                  alt={cardImageAlt}
+                  width={112} // Default width equivalent to w-36
+                  height={32} // Default height equivalent to h-12
+                  className={`${cardImageWidth} ${cardImageHeight} object-${cardImageObjectFit} dark:hidden`}
+                />
+                {/* Dark mode image */}
+                <Image
+                  src={cardImageDark}
+                  alt={cardImageAlt}
+                  width={112} // Default width equivalent to w-36
+                  height={32} // Default height equivalent to h-12
+                  className={`${cardImageWidth} ${cardImageHeight} object-${cardImageObjectFit} hidden dark:block`}
+                />
+              </>
+            ) : (
+              <Image
+                src={cardImage}
+                alt={cardImageAlt}
+                width={112} // Default width equivalent to w-36
+                height={32} // Default height equivalent to h-12
+                className={`${cardImageInvert ? "dark:invert invert-0" : "dark:invert-0 invert"} ${cardImageWidth} ${cardImageHeight} object-${cardImageObjectFit}`}
+              />
+            )}
             {href && (
               <button
                 type="button"

@@ -88,8 +88,8 @@ export default function AboutPage() {
 
               <p>
                 Right now I'm building{" "}
-                <span className="text-foreground font-medium">Cobpot</span> — an
-                AI chief of staff that learns from your patterns and handles
+                <span className="text-foreground font-medium">PennyOne</span> —
+                an AI chief of staff that learns from your patterns and handles
                 tasks proactively. It gets better the longer you use it,
                 handling routine work on your behalf so you can focus on what
                 matters.
@@ -131,7 +131,7 @@ export default function AboutPage() {
               className="pt-8"
             >
               <Image
-                src="/ognjen-signature.svg"
+                src="/me/ognjen-signature.svg"
                 alt="Ognjen's signature"
                 width={192}
                 height={67}
