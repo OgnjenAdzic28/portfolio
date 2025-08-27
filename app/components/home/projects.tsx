@@ -71,7 +71,7 @@ export default function ProjectsSection() {
                 cardImageDark="/projects/PennyOne/PennyOneWordmarkLight.svg"
                 cardImageAlt="PennyOne Logo"
                 title="PennyOne"
-                subtitle="Replacing your chief of staff."
+                subtitle="Replacing Your Chief of Staff"
                 bgImage="/projects/PennyOne/PennyOneBanner.png"
                 bgImageOpacityClass="lg:opacity-60 opacity-10"
                 bgImageInvert={true}
