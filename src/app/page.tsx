@@ -126,10 +126,9 @@ export default function Home() {
         </p>
 
         <p className="reveal" style={revealStyle(2)}>
-          I started coding when I
-          was 12. These days I care most about the jump from vague idea to
-          shipped product: the part where taste, speed, and usefulness have to
-          meet.
+          I started coding when I was 12. These days I care most about the jump
+          from vague idea to shipped product: the part where taste, speed, and
+          usefulness have to meet.
         </p>
 
         <p className="reveal" style={revealStyle(3)}>

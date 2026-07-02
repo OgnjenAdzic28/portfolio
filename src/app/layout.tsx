@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 const siteUrl = "https://ognjenadzic.com";
 const siteName = "Ognjen Adzic";
 const description =
-  "Ognjen Adzic is the co-founder of PennyOne and Pingless, building AI-first software from idea to shipped product.";
+  "Ognjen Adzic builds PennyOne and Pingless.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -33,7 +33,6 @@ export const metadata: Metadata = {
     "Ognjen Adzic",
     "PennyOne",
     "Pingless",
-    "AI software founder",
     "OgnjenAdzic28",
   ],
   alternates: {
