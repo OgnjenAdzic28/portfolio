@@ -6,7 +6,14 @@ import type {
   FocusEvent,
   ReactNode,
 } from "react";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { playHoverTone, playScaleTone } from "@/components/audio-link";
 
 type AnimatedPillItem = AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -28,6 +35,13 @@ type ExitingState = {
 
 function wordStyle(index: number): CSSProperties {
   return { "--word-index": index } as CSSProperties;
+}
+
+function isHoverCapable() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
 }
 
 function AnimatedWordText({
@@ -71,6 +85,7 @@ export function AnimatedPillLinks({
 }: AnimatedPillLinksProps) {
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
   const [exitingState, setExitingState] = useState<ExitingState | null>(null);
+  const [supportsHover, setSupportsHover] = useState(true);
   const rootRef = useRef<HTMLSpanElement>(null);
   const exitIdRef = useRef(0);
   const scaleToneTimeoutsRef = useRef<number[]>([]);
@@ -106,12 +121,12 @@ export function AnimatedPillLinks({
     };
   }, [exitingState]);
 
-  function clearScaleToneSequence() {
+  const clearScaleToneSequence = useCallback(() => {
     scaleToneTimeoutsRef.current.forEach((timeout) => {
       window.clearTimeout(timeout);
     });
     scaleToneTimeoutsRef.current = [];
-  }
+  }, []);
 
   function playHoverScaleSequence(explanation: string) {
     clearScaleToneSequence();
@@ -129,10 +144,33 @@ export function AnimatedPillLinks({
   }
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const updateHoverSupport = () => {
+      const nextSupportsHover = isHoverCapable();
+
+      setSupportsHover(nextSupportsHover);
+
+      if (!nextSupportsHover) {
+        clearScaleToneSequence();
+        setActiveLabel(null);
+        setExitingState(null);
+      }
+    };
+    const animationFrame = window.requestAnimationFrame(updateHoverSupport);
+
+    mediaQuery.addEventListener("change", updateHoverSupport);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      mediaQuery.removeEventListener("change", updateHoverSupport);
+    };
+  }, [clearScaleToneSequence]);
+
+  useEffect(() => {
     return () => {
       clearScaleToneSequence();
     };
-  }, []);
+  }, [clearScaleToneSequence]);
 
   function queueExit(label: string | null) {
     setExitingState({
@@ -143,6 +181,10 @@ export function AnimatedPillLinks({
   }
 
   function resetActive() {
+    if (!supportsHover || !isHoverCapable()) {
+      return;
+    }
+
     if (activeLabel !== null) {
       queueExit(activeLabel);
       playHoverTone("mid");
@@ -152,6 +194,10 @@ export function AnimatedPillLinks({
   }
 
   function setActive(item: AnimatedPillItem) {
+    if (!supportsHover || !isHoverCapable()) {
+      return;
+    }
+
     if (activeLabel === item.label) {
       return;
     }
@@ -163,7 +209,11 @@ export function AnimatedPillLinks({
   }
 
   function handleBlur(event: FocusEvent<HTMLSpanElement>) {
-    if (!rootRef.current?.contains(event.relatedTarget)) {
+    if (
+      supportsHover &&
+      isHoverCapable() &&
+      !rootRef.current?.contains(event.relatedTarget)
+    ) {
       resetActive();
     }
   }
@@ -295,6 +345,39 @@ export function AnimatedPillLinks({
             />
           </span>
         ) : null}
+      </span>
+    );
+  }
+
+  if (!supportsHover) {
+    return (
+      <span
+        className="animated-pill-cluster"
+        data-block={leading ? "true" : undefined}
+      >
+        {leading}
+        {items.map((item, index) => {
+          const { explanation, label, ...props } = item;
+
+          return (
+            <Fragment key={label}>
+              <a
+                {...props}
+                aria-label={props["aria-label"] ?? `${label}: ${explanation}`}
+                className="pill pill-link animated-pill-link"
+              >
+                {label}
+              </a>
+              {index < items.length - 1 ? (
+                <span className="animated-pill-separator">
+                  {" "}
+                  {separator}{" "}
+                </span>
+              ) : null}
+            </Fragment>
+          );
+        })}
+        <span className="animated-pill-trailing">{trailing}</span>
       </span>
     );
   }
