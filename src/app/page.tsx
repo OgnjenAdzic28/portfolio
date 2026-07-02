@@ -1,65 +1,174 @@
-import Image from "next/image";
+import type { CSSProperties } from "react";
+import { AnimatedPillLinks } from "@/components/animated-pill-link";
+import { AudioLink } from "@/components/audio-link";
+import { ThemeToggle } from "@/components/theme-toggle";
+
+type ListItem = {
+  href?: string;
+  name: string;
+  year: string;
+};
+
+const work = [
+  {
+    name: "PennyOne",
+    year: "2026",
+    href: "https://pennyone.app",
+  },
+  {
+    name: "Pingless",
+    year: "2025",
+    href: "https://pingless.dev",
+  },
+  {
+    name: "Maritime@Penn",
+    year: "2025",
+    href: "https://pennmaritime.club",
+  },
+  {
+    name: "ArchiStella",
+    year: "2024",
+  },
+] satisfies ListItem[];
+
+const projects = [
+  {
+    name: "Maritime Perception MVP",
+    year: "2026",
+    href: "https://github.com/OgnjenAdzic28/maritime-perception-mvp",
+  },
+  {
+    name: "FIFA Momentum Tracker",
+    year: "2025",
+    href: "https://github.com/OgnjenAdzic28/fifa-momentum-tracker",
+  },
+  {
+    name: "X Post Scraper",
+    year: "2025",
+    href: "https://github.com/OgnjenAdzic28/x-post-scraper-extension",
+  },
+  {
+    name: "Portfolio",
+    year: "2025",
+    href: "https://github.com/OgnjenAdzic28/portfolio",
+  },
+] satisfies ListItem[];
+
+function revealStyle(index: number): CSSProperties {
+  return { "--i": index } as CSSProperties;
+}
+
+function Section({
+  title,
+  items,
+  delayStart,
+}: {
+  title: string;
+  items: ListItem[];
+  delayStart: number;
+}) {
+  return (
+    <section className="portfolio-section reveal" style={revealStyle(delayStart)}>
+      <h2>{title}</h2>
+      <div className="list">
+        {items.map((item, index) => (
+          <AudioLink
+            key={item.name}
+            href={item.href}
+            tone={index % 2 === 0 ? "low" : "mid"}
+            target={item.href ? "_blank" : undefined}
+            rel={item.href ? "noreferrer" : undefined}
+            className="row"
+            aria-disabled={item.href ? undefined : true}
+          >
+            <span>{item.name}</span>
+            <time>{item.year}</time>
+          </AudioLink>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+    <main className="portfolio-shell">
+      <header className="topbar reveal" style={revealStyle(0)}>
+        <h1>Ognjen Adzic</h1>
+        <ThemeToggle />
+      </header>
+
+      <section className="intro" aria-label="About">
+        <p className="reveal" style={revealStyle(1)}>
+          <AnimatedPillLinks
+            leading="I'm Ognjen, currently working on "
+            items={[
+              {
+                href: "https://pennyone.app",
+                label: "PennyOne",
+                explanation:
+                  "catching important work before it stalls: conversations, pending decisions, scheduling issues, and buried commitments",
+                target: "_blank",
+                rel: "noreferrer",
+              },
+              {
+                href: "https://pingless.dev",
+                label: "Pingless",
+                explanation:
+                  "building web, SaaS, and AI applications that actually work, from landing pages to full web apps",
+                target: "_blank",
+                rel: "noreferrer",
+              },
+            ]}
+            separator="and"
+            trailing=", building software around problems that usually get ignored until they start costing time."
+          />
+        </p>
+
+        <p className="reveal" style={revealStyle(2)}>
+          I started coding when I
+          was 12. These days I care most about the jump from vague idea to
+          shipped product: the part where taste, speed, and usefulness have to
+          meet.
+        </p>
+
+        <p className="reveal" style={revealStyle(3)}>
+          You can find me on{" "}
+          <AudioLink
+            href="https://x.com/OgnjenAdzic"
+            tone="accent"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
+            className="text-link"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            X
+          </AudioLink>
+          ,{" "}
+          <AudioLink
+            href="https://github.com/OgnjenAdzic28"
+            tone="low"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
+            className="text-link"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            GitHub
+          </AudioLink>
+          , and{" "}
+          <AudioLink
+            href="https://www.linkedin.com/in/ognjenadzic"
+            tone="mid"
+            target="_blank"
+            rel="noreferrer"
+            className="text-link"
+          >
+            LinkedIn
+          </AudioLink>
+          .
+        </p>
+      </section>
+
+      <Section title="Work" items={work} delayStart={4} />
+      <Section title="Projects" items={projects} delayStart={5} />
+    </main>
   );
 }
