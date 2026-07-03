@@ -1,8 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { PencilLine } from "lucide-react";
 import { playHoverTone } from "@/components/audio-link";
+import { ThemeModeIcon } from "@/components/theme-mode-icon";
 
 type Theme = "light" | "dark";
 
@@ -67,6 +67,7 @@ function applyThemeWithWarp(theme: Theme) {
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
+  const nextTheme = theme === "dark" ? "light" : "dark";
 
   return (
     <button
@@ -77,12 +78,11 @@ export function ThemeToggle() {
       onPointerEnter={() => playHoverTone("accent")}
       onFocus={() => playHoverTone("accent")}
       onClick={() => {
-        const nextTheme = theme === "dark" ? "light" : "dark";
         applyThemeWithWarp(nextTheme);
         playHoverTone(nextTheme === "dark" ? "mid" : "accent");
       }}
     >
-      <PencilLine aria-hidden="true" size={20} strokeWidth={2.05} />
+      <ThemeModeIcon aria-hidden="true" mode={nextTheme} size={20} />
     </button>
   );
 }
