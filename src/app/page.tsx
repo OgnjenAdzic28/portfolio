@@ -38,19 +38,19 @@ const projects = [
     href: "https://github.com/OgnjenAdzic28/maritime-perception-mvp",
   },
   {
+    name: "Autonomous Driving Lab",
+    year: "2026",
+    href: "https://github.com/OgnjenAdzic28/autonomous-perception-lab",
+  },
+  {
+    name: "Agent Workflow Benchmark",
+    year: "2026",
+    href: "https://github.com/OgnjenAdzic28/agent-workflow-benchmark",
+  },
+  {
     name: "FIFA Momentum Tracker",
     year: "2025",
     href: "https://github.com/OgnjenAdzic28/fifa-momentum-tracker",
-  },
-  {
-    name: "X Post Scraper",
-    year: "2025",
-    href: "https://github.com/OgnjenAdzic28/x-post-scraper-extension",
-  },
-  {
-    name: "Portfolio",
-    year: "2025",
-    href: "https://github.com/OgnjenAdzic28/portfolio",
   },
 ] satisfies ListItem[];
 
