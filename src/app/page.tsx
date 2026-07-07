@@ -164,10 +164,24 @@ export default function Home() {
           </AudioLink>
           .
         </p>
+
+        <p className="reveal" style={revealStyle(4)}>
+          For a sharper version of the same story, you can read my{" "}
+          <AudioLink
+            href="/Ognjen_Adzic_Resume.pdf"
+            tone="accent"
+            target="_blank"
+            rel="noreferrer"
+            className="cv-beam-link"
+          >
+            CV
+          </AudioLink>
+          .
+        </p>
       </section>
 
-      <Section title="Work" items={work} delayStart={4} />
-      <Section title="Projects" items={projects} delayStart={5} />
+      <Section title="Work" items={work} delayStart={5} />
+      <Section title="Projects" items={projects} delayStart={6} />
     </main>
   );
 }
