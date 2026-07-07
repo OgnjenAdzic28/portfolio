@@ -33,6 +33,12 @@ type ExitingState = {
   label: string | null;
 };
 
+const wordRevealDurationMs = 620;
+const wordRevealStaggerMs = 50;
+const scaleToneStartDelayMs = 52;
+const scaleToneDurationMs = 125;
+const scaleToneSequenceRatio = 0.58;
+
 function wordStyle(index: number): CSSProperties {
   return { "--word-index": index } as CSSProperties;
 }
@@ -132,12 +138,20 @@ export function AnimatedPillLinks({
     clearScaleToneSequence();
 
     const wordCount = explanation.split(/\s+/).filter(Boolean).length;
-    const totalSteps = Math.min(7, Math.max(4, Math.ceil(wordCount / 2)));
+    const revealDuration =
+      wordRevealDurationMs + Math.max(0, wordCount - 1) * wordRevealStaggerMs;
+    const scaleSequenceDuration = revealDuration * scaleToneSequenceRatio;
+    const totalSteps = Math.min(9, Math.max(5, Math.ceil(wordCount * 0.48)));
+    const stepInterval =
+      totalSteps <= 1
+        ? 0
+        : (scaleSequenceDuration - scaleToneStartDelayMs - scaleToneDurationMs) /
+          (totalSteps - 1);
 
     for (let step = 0; step < totalSteps; step += 1) {
       const timeout = window.setTimeout(() => {
         playScaleTone(step, totalSteps);
-      }, 42 + step * 46);
+      }, scaleToneStartDelayMs + step * stepInterval);
 
       scaleToneTimeoutsRef.current.push(timeout);
     }

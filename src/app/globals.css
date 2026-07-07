@@ -268,14 +268,14 @@ a {
 .animated-pill-exit .animated-pill-link[data-exiting="true"],
 .animated-pill-exit .animated-pill-separator[data-exiting="true"] {
   display: inline-block;
-  animation: word-blur-out 260ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation: word-blur-out 420ms cubic-bezier(0.2, 0, 0, 1) both;
   will-change: filter, opacity, transform;
 }
 
 .animated-pill-live .animated-pill-link[data-entering="true"],
 .animated-pill-live .animated-pill-separator[data-entering="true"] {
   display: inline-block;
-  animation: word-blur-out 340ms cubic-bezier(0.2, 0, 0, 1) reverse both;
+  animation: word-blur-out 520ms cubic-bezier(0.2, 0, 0, 1) reverse both;
   will-change: filter, opacity, transform;
 }
 
@@ -290,22 +290,22 @@ a {
 }
 
 .animated-pill-live .animated-pill-word {
-  animation: word-blur-up 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--word-index) * 32ms);
+  animation: word-blur-up 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--word-index) * 50ms);
   will-change: filter, opacity, transform;
 }
 
 .animated-pill-out-word {
   display: inline-block;
   line-height: inherit;
-  animation: word-blur-out 260ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation: word-blur-out 420ms cubic-bezier(0.2, 0, 0, 1) both;
   will-change: filter, opacity, transform;
 }
 
 .animated-pill-return-word {
   display: inline-block;
   line-height: inherit;
-  animation: word-blur-out 340ms cubic-bezier(0.2, 0, 0, 1) reverse both;
+  animation: word-blur-out 520ms cubic-bezier(0.2, 0, 0, 1) reverse both;
   will-change: filter, opacity, transform;
 }
 
