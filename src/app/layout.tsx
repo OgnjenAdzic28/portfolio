@@ -96,7 +96,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <Script id="theme-init" strategy="beforeInteractive">
           {
-            "try{var t=localStorage.getItem('ognjen-theme')==='dark'?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}"
+            "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}"
           }
         </Script>
         {children}

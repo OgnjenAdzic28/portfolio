@@ -19,6 +19,18 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --background: #11110f;
+    --foreground: #e9e7df;
+    --muted: #969188;
+    --line: rgba(233, 231, 223, 0.11);
+    --pill: rgba(233, 231, 223, 0.1);
+    --pill-tint: rgba(255, 112, 211, 0.22);
+    color-scheme: dark;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
