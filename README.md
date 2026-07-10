@@ -1,21 +1,7 @@
-# Ognjen Portfolio
+# Ognjen Adzic
 
-Simple personal portfolio for Ognjen Adzic, built with Next.js App Router, React, TypeScript, and Tailwind CSS.
+I'm the co-founder of [PennyOne](https://pennyone.app) and [Pingless](https://pingless.dev), building AI-first software from idea to shipped product. My work spans agent workflows, SaaS applications, and computer vision systems for maritime and autonomous perception.
 
-## Development
+This repository is home to [ognjenadzic.com](https://ognjenadzic.com), my personal portfolio.
 
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-## Quality
-
-```bash
-npm run lint
-npm run build
-```
-
-The page is intentionally minimal: text-first layout, thin list rows, subtle reveal motion, and short Web Audio API hover tones.
+[LinkedIn](https://www.linkedin.com/in/ognjenadzic) · [X](https://x.com/OgnjenAdzic)
