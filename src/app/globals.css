@@ -591,7 +591,7 @@ html[data-theme-transition="warp"]::view-transition-new(root) {
 
 @media (max-width: 720px) {
   .portfolio-shell {
-    width: min(100% - 34px, 840px);
+    width: min(calc(100% - 64px), 840px);
     padding: 56px 0 72px;
   }
 
@@ -603,6 +603,10 @@ html[data-theme-transition="warp"]::view-transition-new(root) {
     font-size: 16px;
     letter-spacing: 0;
     line-height: 1.66;
+  }
+
+  .animated-pill-separator {
+    white-space: pre-wrap;
   }
 
   .portfolio-section {
