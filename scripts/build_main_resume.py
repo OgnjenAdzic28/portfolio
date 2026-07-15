@@ -34,15 +34,38 @@ CONTENT = {
         "  |  github.com/OgnjenAdzic28  |  ognjenadzic.com"
     ),
     "profile": (
-        "Founder and software engineer building AI-first software from idea to shipped product. "
-        "Current work spans PennyOne, Pingless, agent workflow evaluation, SaaS applications, "
+        "Founder building Invokeable, a reliability platform for software used by AI agents. "
+        "Previously built PennyOne and Pingless, with additional work spanning agent evaluation "
         "and computer vision systems for maritime and autonomous perception."
     ),
     "experience": [
         {
+            "role": "Founder",
+            "org": "Invokeable",
+            "date": "2026-Present",
+            "desc": (
+                "Reliability platform that tests whether AI agents can find the right actions "
+                "and complete real product journeys safely."
+            ),
+            "bullets": [
+                (
+                    "Defined and built the product across React, TypeScript, Convex, Trigger.dev, "
+                    "WorkOS, Stripe, PostHog, Sentry, and production deployment."
+                ),
+                (
+                    "Built multi-step journey testing, disturbance and recovery assessment, "
+                    "final-state verification, evidence-backed findings, and release assurance."
+                ),
+                (
+                    "Launched the private waitlist and shaped positioning around making "
+                    "agent-operated software safer and more reliable."
+                ),
+            ],
+        },
+        {
             "role": "Co-Founder",
             "org": "PennyOne",
-            "date": "2025-Present",
+            "date": "2025-2026",
             "desc": (
                 "AI assistant for catching missed follow-ups, buried commitments, decisions, "
                 "and scheduling issues."
@@ -56,16 +79,12 @@ CONTENT = {
                     "Designed an approval-gated workflow model that surfaces risks, drafts next "
                     "actions, and waits for explicit user review before sensitive actions."
                 ),
-                (
-                    "Shape positioning, onboarding, and iteration from real user feedback while "
-                    "keeping the product focused and shippable."
-                ),
             ],
         },
         {
             "role": "Co-Founder",
             "org": "Pingless",
-            "date": "2025-Present",
+            "date": "2025-2026",
             "desc": (
                 "Product and software studio for SaaS platforms, AI automation tools, "
                 "and web applications."
@@ -74,10 +93,6 @@ CONTENT = {
                 (
                     "Build and ship web, SaaS, and AI products with hands-on ownership across "
                     "product scope, design, engineering, deployment, and iteration."
-                ),
-                (
-                    "Translate early ideas into usable releases by balancing customer value, "
-                    "technical feasibility, and speed to market."
                 ),
             ],
         },
@@ -136,8 +151,7 @@ CONTENT = {
     ],
     "additional": [
         "Additional work: Maritime@Penn (2025), ArchiStella (2024).",
-        "Languages: English, Montenegrin, Serbian, Bosnian, and Croatian (native fluency).",
-        "Links: pennyone.app, pingless.dev, github.com/OgnjenAdzic28, ognjenadzic.com.",
+        "Languages: English (native), Croatian (native), Mandarin/Chinese (working fluency), and German (working fluency).",
     ],
 }
 

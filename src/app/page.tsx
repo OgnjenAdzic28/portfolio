@@ -11,6 +11,11 @@ type ListItem = {
 
 const work = [
   {
+    name: "Invokeable",
+    year: "2026",
+    href: "https://invokeable.vercel.app",
+  },
+  {
     name: "PennyOne",
     year: "2026",
     href: "https://pennyone.app",
@@ -101,8 +106,16 @@ export default function Home() {
       <section className="intro" aria-label="About">
         <p className="reveal" style={revealStyle(1)}>
           <AnimatedPillLinks
-            leading="I'm Ognjen, currently working on "
+            leading="I'm Ognjen, currently building "
             items={[
+              {
+                href: "https://invokeable.vercel.app",
+                label: "Invokeable",
+                explanation:
+                  "testing whether AI agents can find the right actions and complete real product journeys from intent to final state",
+                target: "_blank",
+                rel: "noreferrer",
+              },
               {
                 href: "https://pennyone.app",
                 label: "PennyOne",
@@ -120,7 +133,7 @@ export default function Home() {
                 rel: "noreferrer",
               },
             ]}
-            separator="and"
+            separator={[". Previously ", " and "]}
             trailing=", building software around problems that usually get ignored until they start costing time."
           />
         </p>
@@ -141,6 +154,16 @@ export default function Home() {
             className="text-link"
           >
             X
+          </AudioLink>
+          ,{" "}
+          <AudioLink
+            href="https://www.instagram.com/adzicognjen28"
+            tone="accent"
+            target="_blank"
+            rel="noreferrer"
+            className="text-link"
+          >
+            Instagram
           </AudioLink>
           ,{" "}
           <AudioLink

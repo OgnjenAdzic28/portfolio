@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 const siteUrl = "https://ognjenadzic.com";
 const siteName = "Ognjen Adzic";
 const description =
-  "Ognjen Adzic builds PennyOne and Pingless.";
+  "Ognjen Adzic is building Invokeable, which tests whether AI agents can complete real product journeys safely.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   publisher: siteName,
   keywords: [
     "Ognjen Adzic",
+    "Invokeable",
+    "agent reliability",
+    "AI agents",
     "PennyOne",
     "Pingless",
     "OgnjenAdzic28",

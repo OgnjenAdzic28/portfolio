@@ -24,7 +24,7 @@ type AnimatedPillItem = AnchorHTMLAttributes<HTMLAnchorElement> & {
 type AnimatedPillLinksProps = {
   items: AnimatedPillItem[];
   leading?: ReactNode;
-  separator?: string;
+  separator?: string | string[];
   trailing: string;
 };
 
@@ -110,6 +110,12 @@ export function AnimatedPillLinks({
       ? -1
       : items.findIndex((item) => item.label === returningLabel);
   const isReturningToDefault = returningIndex > -1;
+
+  function separatorText(index: number) {
+    return Array.isArray(separator)
+      ? (separator[index] ?? " ")
+      : ` ${separator} `;
+  }
 
   useEffect(() => {
     if (!exitingState) {
@@ -255,8 +261,7 @@ export function AnimatedPillLinks({
               <span className="pill pill-link animated-pill-link">{label}</span>
               {shouldRenderSeparator && !isSeparatorHidden ? (
                 <span className="animated-pill-separator">
-                  {" "}
-                  {separator}{" "}
+                  {separatorText(index)}
                 </span>
               ) : null}
             </Fragment>
@@ -323,8 +328,7 @@ export function AnimatedPillLinks({
                   className="animated-pill-separator"
                   data-exiting={!isSeparatorStillVisible ? "true" : undefined}
                 >
-                  {" "}
-                  {separator}{" "}
+                  {separatorText(index)}
                 </span>
               ) : null}
             </Fragment>
@@ -384,8 +388,7 @@ export function AnimatedPillLinks({
               </a>
               {index < items.length - 1 ? (
                 <span className="animated-pill-separator">
-                  {" "}
-                  {separator}{" "}
+                  {separatorText(index)}
                 </span>
               ) : null}
             </Fragment>
@@ -453,8 +456,7 @@ export function AnimatedPillLinks({
                   data-entering={isReturningSeparator ? "true" : undefined}
                   data-hidden={isSeparatorHidden ? "true" : undefined}
                 >
-                  {" "}
-                  {separator}{" "}
+                  {separatorText(index)}
                 </span>
               ) : null}
             </Fragment>
