@@ -9,11 +9,13 @@ type ListItem = {
   year: string;
 };
 
+const invokeableUrl = "https://www.invokeable.com";
+
 const work = [
   {
     name: "Invokeable",
     year: "2026",
-    href: "https://invokeable.vercel.app",
+    href: invokeableUrl,
   },
   {
     name: "PennyOne",
@@ -109,7 +111,7 @@ export default function Home() {
             leading="I'm Ognjen, currently building "
             items={[
               {
-                href: "https://invokeable.vercel.app",
+                href: invokeableUrl,
                 label: "Invokeable",
                 explanation:
                   "testing whether AI agents can find the right actions and complete real product journeys from intent to final state",
