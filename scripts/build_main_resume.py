@@ -34,34 +34,11 @@ CONTENT = {
         "  |  github.com/OgnjenAdzic28  |  ognjenadzic.com"
     ),
     "profile": (
-        "Founder building Invokeable, a reliability platform for software used by AI agents. "
-        "Previously built PennyOne and Pingless, with additional work spanning agent evaluation "
-        "and computer vision systems for maritime and autonomous perception."
+        "Founder building AI-first products. Previously built PennyOne and Pingless, "
+        "with additional work spanning agent evaluation and computer vision systems for "
+        "maritime and autonomous perception."
     ),
     "experience": [
-        {
-            "role": "Founder",
-            "org": "Invokeable",
-            "date": "2026-Present",
-            "desc": (
-                "Reliability platform that tests whether AI agents can find the right actions "
-                "and complete real product journeys safely."
-            ),
-            "bullets": [
-                (
-                    "Defined and built the product across React, TypeScript, Convex, Trigger.dev, "
-                    "WorkOS, Stripe, PostHog, Sentry, and production deployment."
-                ),
-                (
-                    "Built multi-step journey testing, disturbance and recovery assessment, "
-                    "final-state verification, evidence-backed findings, and release assurance."
-                ),
-                (
-                    "Launched the private waitlist and shaped positioning around making "
-                    "agent-operated software safer and more reliable."
-                ),
-            ],
-        },
         {
             "role": "Co-Founder",
             "org": "PennyOne",

@@ -9,14 +9,7 @@ type ListItem = {
   year: string;
 };
 
-const invokeableUrl = "https://www.invokeable.com";
-
 const work = [
-  {
-    name: "Invokeable",
-    year: "2026",
-    href: invokeableUrl,
-  },
   {
     name: "PennyOne",
     year: "2026",
@@ -108,16 +101,8 @@ export default function Home() {
       <section className="intro" aria-label="About">
         <p className="reveal" style={revealStyle(1)}>
           <AnimatedPillLinks
-            leading="I'm Ognjen, currently building "
+            leading="I'm Ognjen, building trust for software agents use. Previously "
             items={[
-              {
-                href: invokeableUrl,
-                label: "Invokeable",
-                explanation:
-                  "testing whether AI agents can find the right actions and complete real product journeys from intent to final state",
-                target: "_blank",
-                rel: "noreferrer",
-              },
               {
                 href: "https://pennyone.app",
                 label: "PennyOne",
@@ -135,7 +120,7 @@ export default function Home() {
                 rel: "noreferrer",
               },
             ]}
-            separator={[". Previously ", " and "]}
+            separator={[" and "]}
             trailing=", building software around problems that usually get ignored until they start costing time."
           />
         </p>

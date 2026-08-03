@@ -3,15 +3,9 @@
 +382 68 618 611  |  oginjo28@gmail.com  |  linkedin.com/in/ognjenadzic  |  github.com/OgnjenAdzic28  |  ognjenadzic.com
 
 ## Profile
-Founder building Invokeable, a reliability platform for software used by AI agents. Previously built PennyOne and Pingless, with additional work spanning agent evaluation and computer vision systems for maritime and autonomous perception.
+Founder building AI-first products. Previously built PennyOne and Pingless, with additional work spanning agent evaluation and computer vision systems for maritime and autonomous perception.
 
 ## Experience
-### Founder - Invokeable (2026-Present)
-Reliability platform that tests whether AI agents can find the right actions and complete real product journeys safely.
-- Defined and built the product across React, TypeScript, Convex, Trigger.dev, WorkOS, Stripe, PostHog, Sentry, and production deployment.
-- Built multi-step journey testing, disturbance and recovery assessment, final-state verification, evidence-backed findings, and release assurance.
-- Launched the private waitlist and shaped positioning around making agent-operated software safer and more reliable.
-
 ### Co-Founder - PennyOne (2025-2026)
 AI assistant for catching missed follow-ups, buried commitments, decisions, and scheduling issues.
 - Own product, UX, and engineering across Next.js, TypeScript, Convex, auth, billing, deployment, email/calendar context, memory, and agent orchestration.
