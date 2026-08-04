@@ -1,39 +1,32 @@
 # Ognjen Adzic
 
-+382 68 618 611  |  oginjo28@gmail.com  |  linkedin.com/in/ognjenadzic  |  github.com/OgnjenAdzic28  |  ognjenadzic.com
-
-## Profile
-Founder building AI-first products. Previously built PennyOne and Pingless, with additional work spanning agent evaluation and computer vision systems for maritime and autonomous perception.
++382 68 618 611 ▪ oginjo28@gmail.com ▪ LinkedIn ▪ GitHub ▪ Portfolio
 
 ## Experience
-### Co-Founder - PennyOne (2025-2026)
-AI assistant for catching missed follow-ups, buried commitments, decisions, and scheduling issues.
-- Own product, UX, and engineering across Next.js, TypeScript, Convex, auth, billing, deployment, email/calendar context, memory, and agent orchestration.
-- Designed an approval-gated workflow model that surfaces risks, drafts next actions, and waits for explicit user review before sensitive actions.
+### Pingless  	2025 – 2026
+*Co-Founder*
+- Built and shipped SaaS platforms, AI automation tools, and web applications with hands-on ownership across product scope, design, engineering, and deployment.
+- Iterated end-to-end product delivery for clients and internal tools, spanning architecture, UI, and production launch.
 
-### Co-Founder - Pingless (2025-2026)
-Product and software studio for SaaS platforms, AI automation tools, and web applications.
-- Build and ship web, SaaS, and AI products with hands-on ownership across product scope, design, engineering, deployment, and iteration.
+### ArchiStella  	2024
+*Co-Founder*
+- Designed and built an architecture-focused product experience spanning UI/UX, product scope, and application development.
 
-## Selected projects
-### Maritime Perception MVP (2026)
-PyTorch, DeepLabV3+, YOLOv8, ByteTrack, ConvLSTM, ONNX, Gradio
-- Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection, tracking, synthetic radar segmentation, temporal radar modeling, and CPU inference benchmarking.
+## Projects
+### Maritime Perception MVP  	2026
+- Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection, tracking, synthetic radar segmentation, and temporal radar modeling using PyTorch, DeepLabV3+, YOLOv8, ByteTrack, ConvLSTM, and ONNX.
+- Benchmarked CPU inference performance and shipped an interactive Gradio demo for inspection and evaluation.
 
-### Autonomous Perception Lab (2026)
-Python, Rust, YOLO, KITTI, LiDAR projection, tracking, BEV visualization
-- Built a CPU-friendly autonomous driving perception pipeline with real KITTI verification, sparse LiDAR depth projection, multi-object tracking, metrics, replay export, and a Rust replay parser.
+### Autonomous Perception Lab  	2026
+- Built a CPU-friendly autonomous driving perception pipeline with real KITTI verification, sparse LiDAR depth projection, multi-object tracking, metrics, and BEV visualization.
+- Implemented replay export tooling and a Rust replay parser for offline inspection and evaluation.
 
-### Agent Workflow Benchmark (2026)
-TypeScript, Node.js, CLI, React/Vite dashboard, eval tooling
+### Agent Workflow Benchmark  	2026
 - Built a benchmark suite for testing AI agents on email, calendar, task, memory, privacy, prompt-injection, approval-boundary, latency, and trace-quality behavior.
+- Shipped TypeScript/Node.js CLI tooling and a React/Vite dashboard for running evals and inspecting results.
 
-## Skills
-- Product: MVP definition, UX, launch strategy, onboarding, positioning, feedback loops
-- Engineering: TypeScript, React, Next.js, Node.js, Python, APIs, Convex, auth, billing, deployment
-- AI systems: Agent workflows, approval gates, memory, tool use, evaluation, model/provider integration
-- Computer vision: PyTorch, segmentation, detection, tracking, LiDAR projection, radar simulation, ONNX
-
-## Additional
-- Additional work: Maritime@Penn (2025), ArchiStella (2024).
-- Languages: English (native), Croatian (native), Mandarin/Chinese (working fluency), and German (working fluency).
+## Technical Skills
+- **Languages:** TypeScript, Python, Rust, JavaScript
+- **Frameworks & Tools:** React, Next.js, Node.js, Convex, APIs, auth, billing, deployment, Gradio, ONNX
+- **AI & Computer Vision:** Agent workflows, approval gates, memory, tool use, evaluation, PyTorch, segmentation, detection, tracking, LiDAR projection, radar simulation
+- **Spoken Languages:** English (native), Croatian (native), Mandarin/Chinese (working fluency), German (working fluency)
