@@ -11,19 +11,9 @@ type ListItem = {
 
 const work = [
   {
-    name: "PennyOne",
-    year: "2026",
-    href: "https://pennyone.app",
-  },
-  {
     name: "Pingless",
     year: "2025",
     href: "https://pingless.dev",
-  },
-  {
-    name: "Maritime@Penn",
-    year: "2025",
-    href: "https://pennmaritime.club",
   },
   {
     name: "ArchiStella",
@@ -104,14 +94,6 @@ export default function Home() {
             leading="I'm Ognjen, building trust for software agents use. Previously "
             items={[
               {
-                href: "https://pennyone.app",
-                label: "PennyOne",
-                explanation:
-                  "catching important work before it stalls: conversations, pending decisions, scheduling issues, and buried commitments",
-                target: "_blank",
-                rel: "noreferrer",
-              },
-              {
                 href: "https://pingless.dev",
                 label: "Pingless",
                 explanation:
@@ -120,8 +102,7 @@ export default function Home() {
                 rel: "noreferrer",
               },
             ]}
-            separator={[" and "]}
-            trailing=", building software around problems that usually get ignored until they start costing time."
+            trailing=" and ArchiStella, building software around problems that usually get ignored until they start costing time."
           />
         </p>
 
