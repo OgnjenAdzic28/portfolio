@@ -1,7 +1,6 @@
 "use client";
 
 import type {
-  AnchorHTMLAttributes,
   CSSProperties,
   FocusEvent,
   ReactNode,
@@ -16,9 +15,12 @@ import {
 } from "react";
 import { playHoverTone, playScaleTone } from "@/components/audio-link";
 
-type AnimatedPillItem = AnchorHTMLAttributes<HTMLAnchorElement> & {
+type AnimatedPillItem = {
   explanation: string;
   label: string;
+  href?: string;
+  rel?: string;
+  target?: string;
 };
 
 type AnimatedPillLinksProps = {
@@ -47,6 +49,53 @@ function isHoverCapable() {
   return (
     typeof window !== "undefined" &&
     window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
+}
+
+function PillControl({
+  item,
+  className,
+  "aria-label": ariaLabel,
+  tabIndex,
+  "data-entering": dataEntering,
+  "data-hidden": dataHidden,
+  "data-exiting": dataExiting,
+  onFocus,
+  onPointerEnter,
+}: {
+  item: AnimatedPillItem;
+  className: string;
+  "aria-label": string;
+  tabIndex?: number;
+  "data-entering"?: string;
+  "data-hidden"?: string;
+  "data-exiting"?: string;
+  onFocus?: (event: FocusEvent<HTMLElement>) => void;
+  onPointerEnter?: () => void;
+}) {
+  const shared = {
+    className,
+    "aria-label": ariaLabel,
+    tabIndex,
+    "data-entering": dataEntering,
+    "data-hidden": dataHidden,
+    "data-exiting": dataExiting,
+    onFocus,
+    onPointerEnter,
+  };
+
+  if (item.href) {
+    return (
+      <a href={item.href} target={item.target} rel={item.rel} {...shared}>
+        {item.label}
+      </a>
+    );
+  }
+
+  return (
+    <button type="button" {...shared}>
+      {item.label}
+    </button>
   );
 }
 
@@ -375,17 +424,13 @@ export function AnimatedPillLinks({
       >
         {leading}
         {items.map((item, index) => {
-          const { explanation, label, ...props } = item;
-
           return (
-            <Fragment key={label}>
-              <a
-                {...props}
-                aria-label={props["aria-label"] ?? `${label}: ${explanation}`}
+            <Fragment key={item.label}>
+              <PillControl
+                item={item}
+                aria-label={`${item.label}: ${item.explanation}`}
                 className="pill pill-link animated-pill-link"
-              >
-                {label}
-              </a>
+              />
               {index < items.length - 1 ? (
                 <span className="animated-pill-separator">
                   {separatorText(index)}
@@ -421,7 +466,7 @@ export function AnimatedPillLinks({
 
       <span className="animated-pill-live">
         {leading}
-        {items.map(({ explanation, label, onFocus, onPointerEnter, ...props }, index) => {
+        {items.map((item, index) => {
           const isHidden = activeIndex > -1 && index > activeIndex;
           const shouldRenderSeparator = index < items.length - 1;
           const isSeparatorHidden = activeIndex > -1 && index >= activeIndex;
@@ -431,25 +476,21 @@ export function AnimatedPillLinks({
             isReturningToDefault && !isSeparatorVisible(returningIndex, index);
 
           return (
-            <Fragment key={label}>
-              <a
-                {...props}
-                aria-label={`${label}: ${explanation}`}
+            <Fragment key={item.label}>
+              <PillControl
+                item={item}
+                aria-label={`${item.label}: ${item.explanation}`}
                 className="pill pill-link animated-pill-link"
                 data-entering={isReturningItem ? "true" : undefined}
                 data-hidden={isHidden ? "true" : undefined}
-                tabIndex={isHidden ? -1 : props.tabIndex}
-                onFocus={(event) => {
-                  setActive({ explanation, label, ...props });
-                  onFocus?.(event);
+                tabIndex={isHidden ? -1 : undefined}
+                onFocus={() => {
+                  setActive(item);
                 }}
-                onPointerEnter={(event) => {
-                  setActive({ explanation, label, ...props });
-                  onPointerEnter?.(event);
+                onPointerEnter={() => {
+                  setActive(item);
                 }}
-              >
-                {label}
-              </a>
+              />
               {shouldRenderSeparator ? (
                 <span
                   className="animated-pill-separator"

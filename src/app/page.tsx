@@ -13,7 +13,6 @@ const work = [
   {
     name: "Pingless",
     year: "2025",
-    href: "https://pingless.dev",
   },
   {
     name: "ArchiStella",
@@ -94,15 +93,18 @@ export default function Home() {
             leading="I'm Ognjen, building trust for software agents use. Previously "
             items={[
               {
-                href: "https://pingless.dev",
                 label: "Pingless",
                 explanation:
                   "building web, SaaS, and AI applications that actually work, from landing pages to full web apps",
-                target: "_blank",
-                rel: "noreferrer",
+              },
+              {
+                label: "ArchiStella",
+                explanation:
+                  "a B2B marketplace where maritime companies order directly from vessel suppliers, distributors, and brand owners",
               },
             ]}
-            trailing=" and ArchiStella, building software around problems that usually get ignored until they start costing time."
+            separator={[" and "]}
+            trailing=", building software around problems that usually get ignored until they start costing time."
           />
         </p>
 
