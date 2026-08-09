@@ -1,126 +1,148 @@
 %-------------------------
-% ATS-friendly resume in LaTeX
+% Resume in LaTeX
 % Author: Ognjen Adzic
+% Styling aligned with Luka Adzic's resume template
 %-------------------------
 
-\documentclass[letterpaper,10pt]{article}
+\documentclass[letterpaper,11pt]{article}
 
-\usepackage[letterpaper,top=0.42in,bottom=0.46in,left=0.55in,right=0.55in]{geometry}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
 \usepackage{iftex}
-\usepackage{titlesec}
 
 % Preserve a searchable Unicode text layer with either pdfLaTeX or XeTeX/Tectonic.
 \ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
   \input{glyphtounicode}
   \pdfgentounicode=1
 \else
-  \usepackage{fontspec}
-  \IfFontExistsTF{Arial}
-    {\setmainfont{Arial}[Kerning=Off]}
-    {\setmainfont{Latin Modern Sans}[Kerning=Off]}
+  % Force the same Computer Modern font family used by the reference PDF.
+  \usepackage[OT1]{fontenc}
+  \renewcommand{\rmdefault}{cmr}
 \fi
 
 \hypersetup{
   pdftitle={Ognjen Adzic Resume},
   pdfauthor={Ognjen Adzic},
-  pdfsubject={Software Engineering Resume},
-  pdfkeywords={Software Engineer, TypeScript, Python, React, Next.js, AI, Computer Vision}
+  pdfsubject={Resume},
+  pdfkeywords={TypeScript, Python, Rust, React, Next.js, AI, Computer Vision}
 }
 
-\pagestyle{empty}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt}
-\raggedright
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+
 \urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
 
-\titleformat{\section}
-  {\vspace{2pt}\large\bfseries\uppercase}
-  {}{0pt}{}
-  [\vspace{2pt}\titlerule]
-\titlespacing*{\section}{0pt}{7pt}{5pt}
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 
-\setlist[itemize]{
-  leftmargin=0.19in,
-  label=\textbullet,
-  itemsep=1.5pt,
-  topsep=2pt,
-  parsep=0pt,
-  partopsep=0pt
+\newcommand{\resumeItem}[1]{
+  \item\small{{#1 \vspace{-2pt}}}
 }
 
-\newcommand{\entryheading}[3]{%
-  \textbf{#1}\hfill\textbf{#2}\par
-  \textit{#3}\par
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small #3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\projectheading}[3]{%
-  \textbf{#1}\hfill\textbf{#2}\par
-  \textit{#3}\par
+\newcommand{\resumeProjectHeading}[2]{
+  \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small #1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\skill}[2]{%
-  \textbf{#1:} #2\par
-}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in,label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
 \begin{document}
 
 \begin{center}
-  {\Huge\bfseries Ognjen Adzic}\par
-  \vspace{4pt}
-  \small
-  \href{tel:+38268618611}{+382 68 618 611}
-  \textbar{} \href{mailto:oginjo28@gmail.com}{oginjo28@gmail.com}
-  \textbar{} \href{https://www.linkedin.com/in/ognjenadzic}{linkedin.com/in/ognjenadzic}
-  \textbar{} \href{https://github.com/OgnjenAdzic28}{github.com/OgnjenAdzic28}
-  \textbar{} \href{https://ognjenadzic.com}{ognjenadzic.com}
+  \textbf{\Huge \scshape Ognjen Adzic} \\ \vspace{1pt}
+  \small +382 68 618 611 $|$
+  \href{mailto:oginjo28@gmail.com}{\underline{oginjo28@gmail.com}} $|$
+  \href{https://www.linkedin.com/in/ognjenadzic}{\underline{linkedin.com/in/ognjenadzic}} $|$
+  \href{https://github.com/OgnjenAdzic28}{\underline{github.com/OgnjenAdzic28}}
 \end{center}
 
-\vspace{-3pt}
-
 \section{Experience}
-\entryheading{Pingless}{2025 - 2026}{Co-Founder}
-\begin{itemize}
-  \item Built and shipped SaaS platforms, AI automation tools, and web applications, owning product scope, design, architecture, engineering, deployment, and iteration.
-  \item Delivered client and internal products from requirements through production launch using TypeScript, React, Next.js, Node.js, APIs, authentication, billing, and Convex.
-\end{itemize}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Pingless}{}
+    {Co-Founder}{2025 - 2026}
+    \resumeItemListStart
+      \resumeItem{Built and shipped SaaS platforms, AI automation tools, and web applications, owning product scope, design, architecture, engineering, deployment, and iteration.}
+      \resumeItem{Delivered client and internal products from requirements through production launch using TypeScript, React, Next.js, Node.js, APIs, authentication, billing, and Convex.}
+    \resumeItemListEnd
 
-\vspace{2pt}
-\entryheading{ArchiStella}{2024}{Co-Founder}
-\begin{itemize}
-  \item Designed and built a B2B marketplace for maritime companies to order directly from vessel suppliers, distributors, and brand owners.
-  \item Led product scoping, UI/UX, and application development from concept through a working product experience.
-\end{itemize}
+  \resumeSubheading
+    {ArchiStella}{}
+    {Co-Founder}{2024}
+    \resumeItemListStart
+      \resumeItem{Designed and built a B2B marketplace for maritime companies to order directly from vessel suppliers, distributors, and brand owners.}
+      \resumeItem{Led product scoping, UI/UX, and application development from concept through a working product experience.}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
 
 \section{Projects}
-\projectheading{\href{https://github.com/OgnjenAdzic28/maritime-perception-mvp}{Maritime Perception MVP}}{2026}{Python, PyTorch, DeepLabV3+, YOLOv8, ByteTrack, ConvLSTM, ONNX, Gradio}
-\begin{itemize}
-  \item Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection and tracking, synthetic radar segmentation, and temporal radar modeling.
-  \item Benchmarked CPU inference performance and shipped an interactive Gradio demo for inspection and evaluation.
-\end{itemize}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {\textbf{\href{https://github.com/OgnjenAdzic28/maritime-perception-mvp}{Maritime Perception MVP}} $|$ \emph{Python, PyTorch, YOLOv8, ByteTrack, ConvLSTM, ONNX}}{2026}
+    \resumeItemListStart
+      \resumeItem{Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection and tracking, synthetic radar segmentation, and temporal radar modeling.}
+      \resumeItem{Benchmarked CPU inference performance and shipped an interactive Gradio demo for inspection and evaluation.}
+    \resumeItemListEnd
 
-\vspace{2pt}
-\projectheading{\href{https://github.com/OgnjenAdzic28/autonomous-perception-lab}{Autonomous Perception Lab}}{2026}{Python, Rust, YOLO, KITTI, LiDAR, multi-object tracking, BEV visualization}
-\begin{itemize}
-  \item Built a CPU-friendly autonomous driving perception pipeline with real KITTI verification, sparse LiDAR depth projection, multi-object tracking, metrics, and BEV visualization.
-  \item Implemented replay export tooling and a Rust replay parser for offline inspection and evaluation.
-\end{itemize}
+  \resumeProjectHeading
+    {\textbf{\href{https://github.com/OgnjenAdzic28/autonomous-perception-lab}{Autonomous Perception Lab}} $|$ \emph{Python, Rust, YOLO, KITTI, LiDAR, BEV Visualization}}{2026}
+    \resumeItemListStart
+      \resumeItem{Built a CPU-friendly autonomous driving perception pipeline with real KITTI veri{f}ication, sparse LiDAR depth projection, multi-object tracking, metrics, and BEV visualization.}
+      \resumeItem{Implemented replay export tooling and a Rust replay parser for of{f}line inspection and evaluation.}
+    \resumeItemListEnd
 
-\vspace{2pt}
-\projectheading{\href{https://github.com/OgnjenAdzic28/agent-workflow-benchmark}{Agent {W}orkflow Benchmark}}{2026}{TypeScript, Node.js, React, Vite, CLI tooling, AI evaluation}
-\begin{itemize}
-  \item Built a benchmark suite for testing AI agents on email, calendar, task, memory, privacy, prompt injection, approval boundaries, latency, and trace quality.
-  \item Shipped TypeScript and Node.js CLI tooling with a React and Vite dashboard for running evaluations and inspecting results.
-\end{itemize}
+  \resumeProjectHeading
+    {\textbf{\href{https://github.com/OgnjenAdzic28/agent-workflow-benchmark}{Agent {W}ork{f}low Benchmark}} $|$ \emph{TypeScript, Node.js, React, Vite, AI Evaluation}}{2026}
+    \resumeItemListStart
+      \resumeItem{Built a benchmark suite for testing AI agents on email, calendar, task, memory, privacy, prompt injection, approval boundaries, latency, and trace quality.}
+      \resumeItem{Shipped TypeScript and Node.js CLI tooling with a React and Vite dashboard for running evaluations and inspecting results.}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
 
 \section{Technical Skills}
-\skill{Programming Languages}{TypeScript, Python, Rust, JavaScript}
-\skill{{W}eb and Backend}{React, Next.js, Node.js, Vite, Convex, REST APIs, authentication, billing}
-\skill{AI and Computer Vision}{AI agents, tool use, memory, approval gates, evaluation, PyTorch, segmentation, detection, tracking, LiDAR, radar simulation}
-\skill{{T}ools and Deployment}{Git, GitHub, Gradio, ONNX, production deployment}
-\skill{Spoken Languages}{English (native), Croatian (native), Mandarin Chinese (working fluency), German (working fluency)}
+\begin{itemize}[leftmargin=0.15in,label={}]
+  \small{\item{
+    \textbf{Programming Languages}{: TypeScript, Python, Rust, JavaScript} \\
+    \textbf{{W}eb \& Backend}{: React, Next.js, Node.js, Vite, Convex, REST APIs, authentication, billing} \\
+    \textbf{AI \& Computer Vision}{: AI agents, tool use, memory, approval gates, evaluation, PyTorch, segmentation, detection, tracking, LiDAR, radar simulation} \\
+    \textbf{{T}ools \& Deployment}{: Git, GitHub, Gradio, ONNX, production deployment} \\
+    \textbf{Spoken Languages}{: English (native), Croatian (native), Mandarin Chinese (working {f}luency), German (working {f}luency)}
+  }}
+\end{itemize}
 
 \end{document}

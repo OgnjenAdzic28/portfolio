@@ -1,6 +1,6 @@
 # Ognjen Adzic
 
-+382 68 618 611 | oginjo28@gmail.com | linkedin.com/in/ognjenadzic | github.com/OgnjenAdzic28 | ognjenadzic.com
++382 68 618 611 | oginjo28@gmail.com | linkedin.com/in/ognjenadzic | github.com/OgnjenAdzic28
 
 ## Experience
 
@@ -22,21 +22,21 @@
 
 ### Maritime Perception MVP (2026)
 
-Python, PyTorch, DeepLabV3+, YOLOv8, ByteTrack, ConvLSTM, ONNX, Gradio
+Python, PyTorch, YOLOv8, ByteTrack, ConvLSTM, ONNX
 
 - Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection and tracking, synthetic radar segmentation, and temporal radar modeling.
 - Benchmarked CPU inference performance and shipped an interactive Gradio demo for inspection and evaluation.
 
 ### Autonomous Perception Lab (2026)
 
-Python, Rust, YOLO, KITTI, LiDAR, multi-object tracking, BEV visualization
+Python, Rust, YOLO, KITTI, LiDAR, BEV visualization
 
 - Built a CPU-friendly autonomous driving perception pipeline with real KITTI verification, sparse LiDAR depth projection, multi-object tracking, metrics, and BEV visualization.
 - Implemented replay export tooling and a Rust replay parser for offline inspection and evaluation.
 
 ### Agent Workflow Benchmark (2026)
 
-TypeScript, Node.js, React, Vite, CLI tooling, AI evaluation
+TypeScript, Node.js, React, Vite, AI evaluation
 
 - Built a benchmark suite for testing AI agents on email, calendar, task, memory, privacy, prompt injection, approval boundaries, latency, and trace quality.
 - Shipped TypeScript and Node.js CLI tooling with a React and Vite dashboard for running evaluations and inspecting results.
