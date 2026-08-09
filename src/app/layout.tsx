@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -100,7 +101,15 @@ export default function RootLayout({
             "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}"
           }
         </Script>
-        {children}
+        <ViewTransition
+          default={{
+            "writing-forward": "route-forward",
+            "writing-back": "route-back",
+            default: "none",
+          }}
+        >
+          <div className="route-shell">{children}</div>
+        </ViewTransition>
       </body>
     </html>
   );

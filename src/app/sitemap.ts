@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
+import { getSubstackPosts } from "@/lib/substack";
 
 const siteUrl = "https://ognjenadzic.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await getSubstackPosts();
+
   return [
     {
       url: siteUrl,
@@ -10,5 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...posts.map((post) => ({
+      url: `${siteUrl}/writing/${post.slug}`,
+      lastModified: new Date(post.publishedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

@@ -1,7 +1,9 @@
 import type { CSSProperties } from "react";
 import { AnimatedPillLinks } from "@/components/animated-pill-link";
 import { AudioLink } from "@/components/audio-link";
+import { NavigationAudioLink } from "@/components/navigation-audio-link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { formatPostDate, getSubstackPosts } from "@/lib/substack";
 
 type ListItem = {
   href?: string;
@@ -60,26 +62,56 @@ function Section({
     <section className="portfolio-section reveal" style={revealStyle(delayStart)}>
       <h2>{title}</h2>
       <div className="list">
-        {items.map((item, index) => (
-          <AudioLink
-            key={item.name}
-            href={item.href}
-            tone={index % 2 === 0 ? "low" : "mid"}
-            target={item.href ? "_blank" : undefined}
-            rel={item.href ? "noreferrer" : undefined}
-            className="row"
-            aria-disabled={item.href ? undefined : true}
-          >
-            <span>{item.name}</span>
-            <time>{item.year}</time>
-          </AudioLink>
-        ))}
+        {items.map((item, index) => {
+          const tone = index % 2 === 0 ? "low" : "mid";
+          const content = (
+            <>
+              <span>{item.name}</span>
+              <time>{item.year}</time>
+            </>
+          );
+
+          if (item.href?.startsWith("/")) {
+            return (
+              <NavigationAudioLink
+                key={item.name}
+                href={item.href}
+                tone={tone}
+                transitionType="writing-forward"
+                className="row"
+              >
+                {content}
+              </NavigationAudioLink>
+            );
+          }
+
+          return (
+            <AudioLink
+              key={item.name}
+              href={item.href}
+              tone={tone}
+              target={item.href ? "_blank" : undefined}
+              rel={item.href ? "noreferrer" : undefined}
+              className="row"
+              aria-disabled={item.href ? undefined : true}
+            >
+              {content}
+            </AudioLink>
+          );
+        })}
       </div>
     </section>
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getSubstackPosts();
+  const writing = posts.slice(0, 4).map((post) => ({
+    name: post.title,
+    year: formatPostDate(post.publishedAt),
+    href: `/writing/${post.slug}`,
+  }));
+
   return (
     <main className="portfolio-shell">
       <header className="topbar reveal" style={revealStyle(0)}>
@@ -175,6 +207,9 @@ export default function Home() {
 
       <Section title="Work" items={work} delayStart={5} />
       <Section title="Projects" items={projects} delayStart={6} />
+      {writing.length > 0 ? (
+        <Section title="Writing" items={writing} delayStart={7} />
+      ) : null}
     </main>
   );
 }
