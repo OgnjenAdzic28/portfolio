@@ -1,0 +1,131 @@
+%-------------------------
+% ATS-friendly resume in LaTeX
+% Author: Ognjen Adzic
+%-------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[letterpaper,top=0.42in,bottom=0.46in,left=0.55in,right=0.55in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{iftex}
+\usepackage{titlesec}
+
+% Preserve a searchable Unicode text layer with either pdfLaTeX or XeTeX/Tectonic.
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\else
+  \usepackage{fontspec}
+  \IfFontExistsTF{Arial}
+    {\setmainfont{Arial}[Kerning=Off]}
+    {\setmainfont{Latin Modern Sans}[Kerning=Off]}
+\fi
+
+\hypersetup{
+  pdftitle={Ognjen Adzic Resume},
+  pdfauthor={Ognjen Adzic},
+  pdfsubject={Software Engineering Resume},
+  pdfkeywords={Software Engineer, TypeScript, Python, React, Next.js, AI, Computer Vision}
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\raggedright
+\urlstyle{same}
+
+\titleformat{\section}
+  {\vspace{2pt}\large\bfseries\uppercase}
+  {}{0pt}{}
+  [\vspace{2pt}\titlerule]
+\titlespacing*{\section}{0pt}{7pt}{5pt}
+
+\setlist[itemize]{
+  leftmargin=0.19in,
+  label=\textbullet,
+  itemsep=1.5pt,
+  topsep=2pt,
+  parsep=0pt,
+  partopsep=0pt
+}
+
+\newcommand{\entryheading}[3]{%
+  \textbf{#1}\hfill\textbf{#2}\par
+  \textit{#3}\par
+}
+
+\newcommand{\projectheading}[3]{%
+  \textbf{#1}\hfill\textbf{#2}\par
+  \textit{#3}\par
+}
+
+\newcommand{\skill}[2]{%
+  \textbf{#1:} #2\par
+}
+
+\begin{document}
+
+\begin{center}
+  {\Huge\bfseries Ognjen Adzic}\par
+  \vspace{2pt}
+  {\normalsize Software Engineer and Product Builder}\par
+  \vspace{4pt}
+  \small
+  \href{tel:+38268618611}{+382 68 618 611}
+  \textbar{} \href{mailto:oginjo28@gmail.com}{oginjo28@gmail.com}
+  \textbar{} \href{https://www.linkedin.com/in/ognjenadzic}{linkedin.com/in/ognjenadzic}
+  \textbar{} \href{https://github.com/OgnjenAdzic28}{github.com/OgnjenAdzic28}
+  \textbar{} \href{https://ognjenadzic.com}{ognjenadzic.com}
+\end{center}
+
+\vspace{-5pt}
+
+\section{Professional Summary}
+Product-focused software engineer and founder experienced in shipping SaaS products, AI agent workflows, and computer vision systems. Owns delivery from product scoping and UX through architecture, implementation, deployment, and evaluation.
+
+\section{Experience}
+\entryheading{Pingless}{2025 - 2026}{Co-Founder}
+\begin{itemize}
+  \item Built and shipped SaaS platforms, AI automation tools, and web applications, owning product scope, design, architecture, engineering, deployment, and iteration.
+  \item Delivered client and internal products from requirements through production launch using TypeScript, React, Next.js, Node.js, APIs, authentication, billing, and Convex.
+\end{itemize}
+
+\vspace{2pt}
+\entryheading{ArchiStella}{2024}{Co-Founder}
+\begin{itemize}
+  \item Designed and built a B2B marketplace for maritime companies to order directly from vessel suppliers, distributors, and brand owners.
+  \item Led product scoping, UI/UX, and application development from concept through a working product experience.
+\end{itemize}
+
+\section{Projects}
+\projectheading{\href{https://github.com/OgnjenAdzic28/maritime-perception-mvp}{Maritime Perception MVP}}{2026}{Python, PyTorch, DeepLabV3+, YOLOv8, ByteTrack, ConvLSTM, ONNX, Gradio}
+\begin{itemize}
+  \item Built a maritime perception stack for water, sky, and obstacle segmentation, vessel detection and tracking, synthetic radar segmentation, and temporal radar modeling.
+  \item Benchmarked CPU inference performance and shipped an interactive Gradio demo for inspection and evaluation.
+\end{itemize}
+
+\vspace{2pt}
+\projectheading{\href{https://github.com/OgnjenAdzic28/autonomous-perception-lab}{Autonomous Perception Lab}}{2026}{Python, Rust, YOLO, KITTI, LiDAR, multi-object tracking, BEV visualization}
+\begin{itemize}
+  \item Built a CPU-friendly autonomous driving perception pipeline with real KITTI verification, sparse LiDAR depth projection, multi-object tracking, metrics, and BEV visualization.
+  \item Implemented replay export tooling and a Rust replay parser for offline inspection and evaluation.
+\end{itemize}
+
+\vspace{2pt}
+\projectheading{\href{https://github.com/OgnjenAdzic28/agent-workflow-benchmark}{Agent {W}orkflow Benchmark}}{2026}{TypeScript, Node.js, React, Vite, CLI tooling, AI evaluation}
+\begin{itemize}
+  \item Built a benchmark suite for testing AI agents on email, calendar, task, memory, privacy, prompt injection, approval boundaries, latency, and trace quality.
+  \item Shipped TypeScript and Node.js CLI tooling with a React and Vite dashboard for running evaluations and inspecting results.
+\end{itemize}
+
+\section{Technical Skills}
+\skill{Programming Languages}{TypeScript, Python, Rust, JavaScript}
+\skill{{W}eb and Backend}{React, Next.js, Node.js, Vite, Convex, REST APIs, authentication, billing}
+\skill{AI and Computer Vision}{AI agents, tool use, memory, approval gates, evaluation, PyTorch, segmentation, detection, tracking, LiDAR, radar simulation}
+\skill{{T}ools and Deployment}{Git, GitHub, Gradio, ONNX, production deployment}
+\skill{Spoken Languages}{English (native), Croatian (native), Mandarin Chinese (working fluency), German (working fluency)}
+
+\end{document}
