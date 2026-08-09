@@ -2,11 +2,11 @@
 
 +382 68 618 611 | oginjo28@gmail.com | linkedin.com/in/ognjenadzic | github.com/OgnjenAdzic28 | ognjenadzic.com
 
-Software Engineer and Product Builder
+Founder and Software Engineer
 
 ## Professional Summary
 
-Product-focused software engineer and founder experienced in shipping SaaS products, AI agent workflows, and computer vision systems. Owns delivery from product scoping and UX through architecture, implementation, deployment, and evaluation.
+Founder and software engineer experienced in shipping SaaS products, AI agent workflows, and computer vision systems. Owns delivery from product scoping and UX through architecture, implementation, deployment, and evaluation.
 
 ## Experience
 
