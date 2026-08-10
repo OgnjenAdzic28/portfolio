@@ -177,7 +177,7 @@ export default async function Home() {
           >
             GitHub
           </AudioLink>
-          , and{" "}
+          ,{" "}
           <AudioLink
             href="https://www.linkedin.com/in/ognjenadzic"
             tone="mid"
@@ -186,6 +186,16 @@ export default async function Home() {
             className="text-link"
           >
             LinkedIn
+          </AudioLink>
+          , and{" "}
+          <AudioLink
+            href="https://ognjenadzic.substack.com"
+            tone="accent"
+            target="_blank"
+            rel="noreferrer"
+            className="text-link"
+          >
+            Substack
           </AudioLink>
           .
         </p>
