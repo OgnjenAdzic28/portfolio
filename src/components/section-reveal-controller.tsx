@@ -1,8 +1,9 @@
 import { useLayoutEffect } from "react";
 
 const revealSelector = ".page-reveal-root > *:not(.page-reveal-root)";
+const childStagger = 45;
 
-function getRevealSpan(target: HTMLElement, childStagger: number) {
+function getRevealSpan(target: HTMLElement) {
   if (target.dataset.sectionReveal !== "children") {
     return childStagger;
   }
@@ -29,12 +30,8 @@ export function SectionRevealController() {
 
     document.documentElement.dataset.sectionRevealReady = "true";
 
-    const compactViewport = window.matchMedia("(max-width: 620px)").matches;
-    const childStagger = compactViewport ? 28 : 45;
     const heroSequenceDuration = document.querySelector(".home-reveal-root")
-      ? compactViewport
-        ? 340
-        : 400
+      ? 400
       : 0;
     let nextRevealStart = heroSequenceDuration;
 
@@ -44,7 +41,7 @@ export function SectionRevealController() {
         `${nextRevealStart}ms`,
       );
       target.dataset.sectionRevealVisible = "true";
-      nextRevealStart += getRevealSpan(target, childStagger);
+      nextRevealStart += getRevealSpan(target);
     }
   }, []);
 

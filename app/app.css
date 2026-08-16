@@ -2994,9 +2994,7 @@ html[data-theme="dark"] .theme-toggle-icon-light {
   .reveal,
   [data-section-reveal="self"][data-section-reveal-visible="true"],
   [data-section-reveal="children"][data-section-reveal-visible="true"] > * {
-    animation-duration: 260ms;
-    animation-name: page-block-enter-mobile;
-    animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    animation: none;
   }
 
   html[data-section-reveal-enabled]
@@ -3016,7 +3014,8 @@ html[data-theme="dark"] .theme-toggle-icon-light {
   [data-section-reveal="self"],
   [data-section-reveal="children"] > * {
     filter: none;
-    transform: translateY(4px);
+    opacity: 1;
+    transform: none;
   }
 
   .viewport-progressive-blur,
@@ -3321,22 +3320,6 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 @keyframes theme-mobile-new {
   from {
     opacity: 0;
-  }
-}
-
-@keyframes page-block-enter-mobile {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  45% {
-    opacity: 0.72;
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 
