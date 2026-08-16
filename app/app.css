@@ -2994,8 +2994,9 @@ html[data-theme="dark"] .theme-toggle-icon-light {
   .reveal,
   [data-section-reveal="self"][data-section-reveal-visible="true"],
   [data-section-reveal="children"][data-section-reveal-visible="true"] > * {
-    animation-duration: 180ms;
+    animation-duration: 260ms;
     animation-name: page-block-enter-mobile;
+    animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   html[data-section-reveal-enabled]
@@ -3027,8 +3028,23 @@ html[data-theme="dark"] .theme-toggle-icon-light {
     height: 56px;
   }
 
+  .site-header::before {
+    position: absolute;
+    z-index: 0;
+    inset: 0 0 -28px;
+    background: linear-gradient(
+      to bottom,
+      var(--background) 0,
+      color-mix(in srgb, var(--background) 96%, transparent) 56px,
+      color-mix(in srgb, var(--background) 72%, transparent) 72px,
+      transparent 100%
+    );
+    content: "";
+    pointer-events: none;
+  }
+
   .site-header-nav {
-    width: calc(100% - 36px);
+    width: calc(100% - 48px);
     height: 56px;
     gap: 12px;
   }
@@ -3311,7 +3327,11 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 @keyframes page-block-enter-mobile {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(10px);
+  }
+
+  45% {
+    opacity: 0.72;
   }
 
   to {
@@ -3322,7 +3342,7 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 
 @media (max-width: 380px) {
   .site-header-nav {
-    width: calc(100% - 24px);
+    width: calc(100% - 48px);
     gap: 8px;
   }
 
