@@ -1,18 +1,9 @@
-"use client";
-
-import { useSyncExternalStore } from "react";
-import { playHoverTone } from "@/components/audio-link";
+import { play } from "cuelume";
+import { useEffect, useSyncExternalStore } from "react";
 import { ThemeModeIcon } from "@/components/theme-mode-icon";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type Theme = "light" | "dark";
-
-type ViewTransition = {
-  finished: Promise<void>;
-};
-
-type TransitionDocument = Document & {
-  startViewTransition?: (updateCallback: () => void) => ViewTransition;
-};
 
 const storageKey = "ognjen-theme";
 const themeChangeEvent = "ognjen-theme-change";
@@ -78,47 +69,75 @@ function applyTheme(theme: Theme, options: { persist?: boolean } = {}) {
   window.dispatchEvent(new Event(themeChangeEvent));
 }
 
-function shouldReduceMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function applyThemeWithWarp(theme: Theme) {
-  const transitionDocument = document as TransitionDocument;
-
-  if (!transitionDocument.startViewTransition || shouldReduceMotion()) {
-    applyTheme(theme);
-    return;
-  }
-
-  document.documentElement.dataset.themeTransition = "warp";
-
-  const transition = transitionDocument.startViewTransition(() => {
-    applyTheme(theme);
-  });
-
-  void transition.finished.finally(() => {
-    delete document.documentElement.dataset.themeTransition;
-  });
-}
-
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
   const nextTheme = theme === "dark" ? "light" : "dark";
+  const label = `Switch to ${nextTheme} mode`;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      const isTyping =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.matches("input, textarea, select") ||
+          Boolean(target.closest('[contenteditable="true"]')));
+
+      if (
+        event.defaultPrevented ||
+        event.repeat ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.key.toLowerCase() !== "d" ||
+        isTyping
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      const activeTheme = getSnapshot();
+      play("toggle");
+      applyTheme(activeTheme === "dark" ? "light" : "dark");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
-    <button
-      type="button"
-      className="mark-link"
-      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      aria-pressed={theme === "dark"}
-      onPointerEnter={() => playHoverTone("accent")}
-      onFocus={() => playHoverTone("accent")}
-      onClick={() => {
-        applyThemeWithWarp(nextTheme);
-        playHoverTone(nextTheme === "dark" ? "mid" : "accent");
-      }}
-    >
-      <ThemeModeIcon aria-hidden="true" mode={nextTheme} size={20} />
-    </button>
+    <Tooltip content={`${label} (D)`} sideOffset={10}>
+      <button
+        type="button"
+        className="theme-toggle site-footer-control"
+        aria-label={label}
+        aria-keyshortcuts="d"
+        aria-pressed={theme === "dark"}
+        data-cuelume-hover="tick"
+        data-cuelume-toggle="toggle"
+        onClick={() => {
+          applyTheme(nextTheme);
+        }}
+      >
+        <span className="site-footer-control-icon-wrap theme-toggle-icons">
+          <ThemeModeIcon
+            aria-hidden="true"
+            className="site-footer-control-icon theme-toggle-icon-light"
+            mode="dark"
+            size={18}
+          />
+          <ThemeModeIcon
+            aria-hidden="true"
+            className="site-footer-control-icon theme-toggle-icon-dark"
+            mode="light"
+            size={18}
+          />
+        </span>
+      </button>
+    </Tooltip>
   );
 }

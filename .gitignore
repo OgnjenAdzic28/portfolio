@@ -13,9 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# generated framework caches
+/.react-router/
 
 # production
 /build
@@ -36,6 +35,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare
+.wrangler
+.dev.vars*
+worker-configuration.d.ts
+
 # typescript
 *.tsbuildinfo
-next-env.d.ts

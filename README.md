@@ -6,6 +6,23 @@ This repository is home to [ognjenadzic.com](https://ognjenadzic.com), my person
 
 [LinkedIn](https://www.linkedin.com/in/ognjenadzic) · [X](https://x.com/OgnjenAdzic)
 
+## Development
+
+The site runs on React Router framework mode with Vite and server-side rendering.
+
+```bash
+npm install
+npm run dev
+```
+
+Run the production checks with:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
 ## Resume
 
 The resume is maintained as ATS-friendly LaTeX in `resume/Ognjen_Adzic_Resume.tex`.
