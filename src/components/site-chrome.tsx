@@ -113,6 +113,9 @@ export function SiteChrome() {
   const savedReadingStateRef = useRef({ furthest: 0, position: 0 });
   const articleSlug = getArticleSlug(pathname);
   const showScrollIndicator = articleSlug !== null && !compactViewport;
+  const headerVisible =
+    scrollState.hasScrolled &&
+    !(compactViewport && scrollState.footerRevealed);
   const wroteIsActive =
     pathname === "/writing" || pathname.startsWith("/writing/");
   const builtIsActive = pathname === "/" && activeHash === "#work";
@@ -403,9 +406,9 @@ export function SiteChrome() {
 
       <header
         className="site-header"
-        data-visible={scrollState.hasScrolled}
-        aria-hidden={!scrollState.hasScrolled}
-        inert={scrollState.hasScrolled ? undefined : true}
+        data-visible={headerVisible}
+        aria-hidden={!headerVisible}
+        inert={headerVisible ? undefined : true}
       >
         <nav className="site-header-nav" aria-label="Primary navigation">
           <AudioLink

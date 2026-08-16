@@ -3025,6 +3025,10 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 
   .site-header {
     height: 56px;
+    filter: none;
+    transition-duration: 220ms;
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .site-header::before {
