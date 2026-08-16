@@ -108,10 +108,11 @@ function navigateToArticleProgress(progress: number) {
 export function SiteChrome() {
   const { pathname } = useLocation();
   const [activeHash, setActiveHash] = useState("");
+  const [compactViewport, setCompactViewport] = useState(false);
   const [scrollState, setScrollState] = useState(initialScrollState);
   const savedReadingStateRef = useRef({ furthest: 0, position: 0 });
   const articleSlug = getArticleSlug(pathname);
-  const showScrollIndicator = articleSlug !== null;
+  const showScrollIndicator = articleSlug !== null && !compactViewport;
   const wroteIsActive =
     pathname === "/writing" || pathname.startsWith("/writing/");
   const builtIsActive = pathname === "/" && activeHash === "#work";
@@ -119,6 +120,20 @@ export function SiteChrome() {
     pathname === "/" && activeHash === "#contributions";
   const likedIsActive =
     pathname === "/favorites" || pathname.startsWith("/favorites/");
+
+  useEffect(() => {
+    const compactViewportQuery = window.matchMedia("(max-width: 620px)");
+    const syncCompactViewport = () => {
+      setCompactViewport(compactViewportQuery.matches);
+    };
+
+    syncCompactViewport();
+    compactViewportQuery.addEventListener("change", syncCompactViewport);
+
+    return () => {
+      compactViewportQuery.removeEventListener("change", syncCompactViewport);
+    };
+  }, []);
 
   useEffect(() => {
     const syncHash = () => {
@@ -235,7 +250,7 @@ export function SiteChrome() {
       // Keep the full ruler fixed until its bottom reaches the route edge,
       // then move it with the route while preserving the content gap.
       const indicatorOffset =
-        routeBottom === undefined
+        compactViewport || routeBottom === undefined
           ? 0
           : Math.min(
               0,
@@ -250,7 +265,7 @@ export function SiteChrome() {
           ? primaryHeading.getBoundingClientRect().bottom <= 0
           : scrollY > 24,
         indicatorOffset,
-        progress: readingProgress,
+        progress: compactViewport ? 0 : readingProgress,
       };
       setScrollState((currentState) =>
         currentState.canScroll === nextState.canScroll &&
@@ -285,7 +300,7 @@ export function SiteChrome() {
         window.cancelAnimationFrame(animationFrame);
       }
     };
-  }, [articleSlug]);
+  }, [articleSlug, compactViewport]);
 
   const navigateFromPointer = (event: ReactPointerEvent<HTMLElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();

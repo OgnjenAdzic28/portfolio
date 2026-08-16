@@ -1059,6 +1059,28 @@ html[data-theme-transition="warp"]::view-transition-new(root) {
   z-index: 1;
 }
 
+html[data-theme-transition="warp"]::view-transition-old(site-footer),
+html[data-theme-transition="warp"]::view-transition-old(bottom-progressive-blur) {
+  animation: theme-stable-old 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html[data-theme-transition="warp"]::view-transition-new(site-footer),
+html[data-theme-transition="warp"]::view-transition-new(bottom-progressive-blur) {
+  animation: theme-stable-new 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes theme-stable-old {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes theme-stable-new {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes theme-blur-new {
   0% {
     filter: blur(18px) brightness(1.04);
@@ -1442,6 +1464,7 @@ body {
   bottom: 0;
   opacity: 0;
   transition: opacity 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  view-transition-name: bottom-progressive-blur;
 }
 
 .bottom-progressive-blur[data-visible="true"] {
@@ -2611,6 +2634,7 @@ html[data-theme="dark"] .shelf-movie-cover-outline {
   color: var(--muted);
   font-size: 13.7px;
   line-height: 1.45;
+  view-transition-name: site-footer;
 }
 
 .site-footer p {
@@ -2990,6 +3014,46 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 }
 
 @media (max-width: 620px) {
+  html[data-theme-transition="warp"]::view-transition-old(root) {
+    animation: theme-mobile-old 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  html[data-theme-transition="warp"]::view-transition-new(root) {
+    animation: theme-mobile-new 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .reveal,
+  [data-section-reveal="self"][data-section-reveal-visible="true"],
+  [data-section-reveal="children"][data-section-reveal-visible="true"] > * {
+    animation-duration: 180ms;
+    animation-name: page-block-enter-mobile;
+  }
+
+  html[data-section-reveal-enabled]
+    .page-reveal-root:not(.home-reveal-root)
+    > *:not(section, .page-reveal-root),
+  html[data-section-reveal-enabled]
+    .home-reveal-root
+    > *:not(section, .page-reveal-root),
+  html[data-section-reveal-enabled]
+    .page-reveal-root:not(.home-reveal-root)
+    > section
+    > *,
+  html[data-section-reveal-enabled]
+    .home-reveal-root
+    > section:not(.hero)
+    > *,
+  [data-section-reveal="self"],
+  [data-section-reveal="children"] > * {
+    filter: none;
+    transform: translateY(4px);
+  }
+
+  .viewport-progressive-blur,
+  .site-footer-noise {
+    display: none;
+  }
+
   .site-header {
     height: 56px;
   }
@@ -3260,6 +3324,30 @@ html[data-theme="dark"] .theme-toggle-icon-light {
 
   .scroll-indicator {
     display: none;
+  }
+}
+
+@keyframes theme-mobile-old {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes theme-mobile-new {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes page-block-enter-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
