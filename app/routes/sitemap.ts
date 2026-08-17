@@ -1,5 +1,7 @@
 import { getSubstackPosts } from "@/lib/substack.server";
+import { cloudflareEnvContext } from "@/lib/cloudflare-context";
 import { getSecurityHeaders } from "@/lib/security-headers.server";
+import type { Route } from "./+types/sitemap";
 
 const siteUrl = "https://ognjenadzic.com";
 
@@ -19,8 +21,9 @@ function urlEntry(
   ].join("\n");
 }
 
-export async function loader() {
-  const posts = await getSubstackPosts();
+export async function loader({ context }: Route.LoaderArgs) {
+  const env = context.get(cloudflareEnvContext);
+  const posts = await getSubstackPosts(env.PORTFOLIO_WRITING_FEED);
   const now = new Date().toISOString();
   const entries = [
     urlEntry("/", now, "monthly", 1),

@@ -1,13 +1,42 @@
 import sanitizeHtml from "sanitize-html";
 import { XMLParser } from "fast-xml-parser";
 import { substackUrl, type SubstackPost } from "@/lib/substack";
-import { withTimedCache } from "@/lib/timed-cache.server";
 
 const feedUrl = `${substackUrl}/feed`;
 const substackOrigin = new URL(substackUrl).origin;
 const maxFeedBytes = 2_000_000;
 const postSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const refreshIntervalMilliseconds = 60_000;
+const feedFetchAttempts = 3;
+export const substackPostsKey = "substack-posts:v1";
+
+const bundledFallbackPosts: SubstackPost[] = [
+  {
+    slug: "a-signal-is-not-a-guarantee",
+    title: "A signal is not a guarantee",
+    description:
+      "The trouble starts when a narrow result becomes a conclusion about the whole system.",
+    content:
+      '<p>This article is temporarily unavailable here. You can <a href="https://ognjenadzic.substack.com/p/a-signal-is-not-a-guarantee" rel="noopener noreferrer" target="_blank">read it on Substack</a>.</p>',
+    url: "https://ognjenadzic.substack.com/p/a-signal-is-not-a-guarantee",
+    publishedAt: "2026-08-16T09:57:41.000Z",
+    author: "Ognjen Adzic",
+    coverImage:
+      "https://substack-post-media.s3.amazonaws.com/public/images/92dc5fbe-3107-48d6-a1d4-ddad92e27c72_2400x1260.png",
+  },
+  {
+    slug: "ai-makes-learning-more-important",
+    title: "AI makes learning more important",
+    description:
+      "AI can one-shot a convincing demo. Reliable software still requires judgment, verification, and enough knowledge to know when the model is wrong.",
+    content:
+      '<p>This article is temporarily unavailable here. You can <a href="https://ognjenadzic.substack.com/p/ai-makes-learning-more-important" rel="noopener noreferrer" target="_blank">read it on Substack</a>.</p>',
+    url: "https://ognjenadzic.substack.com/p/ai-makes-learning-more-important",
+    publishedAt: "2026-08-09T17:18:43.000Z",
+    author: "Ognjen Adzic",
+    coverImage:
+      "https://substack-post-media.s3.amazonaws.com/public/images/0c5953bb-0214-4421-9e31-7d8ffe7c3dbb_2400x1260.png",
+  },
+];
 
 type FeedItem = {
   title?: string;
@@ -212,59 +241,215 @@ function toPost(item: FeedItem): SubstackPost | null {
   };
 }
 
-export function getSubstackPosts(): Promise<SubstackPost[]> {
-  return withTimedCache(
-    "substack-posts",
-    refreshIntervalMilliseconds,
-    async () => {
-      try {
-        const response = await fetch(feedUrl, {
-          redirect: "manual",
-          signal: AbortSignal.timeout(8_000),
-        });
+function normalizeStoredPost(value: unknown): SubstackPost | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
 
-        if (!response.ok) {
-          throw new Error(`Substack feed returned ${response.status}`);
-        }
+  const candidate = value as Record<string, unknown>;
+  const identity = getPostIdentity({
+    link: typeof candidate.url === "string" ? candidate.url : undefined,
+  });
+  const publishedAt =
+    typeof candidate.publishedAt === "string"
+      ? Date.parse(candidate.publishedAt)
+      : Number.NaN;
 
-        const contentLength = Number(response.headers.get("content-length"));
+  if (
+    !identity ||
+    identity.slug !== candidate.slug ||
+    typeof candidate.title !== "string" ||
+    typeof candidate.description !== "string" ||
+    typeof candidate.content !== "string" ||
+    typeof candidate.author !== "string" ||
+    !Number.isFinite(publishedAt)
+  ) {
+    return null;
+  }
 
-        if (Number.isFinite(contentLength) && contentLength > maxFeedBytes) {
-          throw new Error("Substack feed exceeded the size limit");
-        }
+  return {
+    slug: identity.slug,
+    title: candidate.title,
+    description: candidate.description,
+    content: cleanPostHtml(candidate.content),
+    url: identity.url,
+    publishedAt: new Date(publishedAt).toISOString(),
+    author: candidate.author,
+    coverImage:
+      typeof candidate.coverImage === "string" &&
+      candidate.coverImage.startsWith("https://")
+        ? candidate.coverImage
+        : undefined,
+  };
+}
 
-        const rawFeed = await response.text();
-
-        if (Buffer.byteLength(rawFeed, "utf8") > maxFeedBytes) {
-          throw new Error("Substack feed exceeded the size limit");
-        }
-
-        const feed = parser.parse(rawFeed) as ParsedFeed;
-        const rawItems = feed.rss?.channel?.item;
-        const items = rawItems
-          ? Array.isArray(rawItems)
-            ? rawItems
-            : [rawItems]
-          : [];
-
-        return items
-          .map(toPost)
-          .filter((post): post is SubstackPost => post !== null)
-          .sort(
-            (first, second) =>
-              new Date(second.publishedAt).getTime() -
-              new Date(first.publishedAt).getTime(),
-          );
-      } catch (error) {
-        console.error("Unable to load the Substack feed", error);
-        return [];
-      }
-    },
+function logFeedError(message: string, error: unknown) {
+  console.error(
+    JSON.stringify({
+      event: "substack_feed_error",
+      message,
+      error: error instanceof Error ? error.message : String(error),
+    }),
   );
 }
 
-export async function getSubstackPost(slug: string) {
-  const posts = await getSubstackPosts();
+function logFeedAttemptFailure(attempt: number, error: unknown) {
+  console.warn(
+    JSON.stringify({
+      event: "substack_feed_attempt_failed",
+      attempt,
+      attempts: feedFetchAttempts,
+      error: error instanceof Error ? error.message : String(error),
+    }),
+  );
+}
+
+function getRetryDelayMilliseconds(response: Response, attempt: number) {
+  const retryAfter = response.headers.get("retry-after");
+  const seconds = Number(retryAfter);
+
+  if (Number.isFinite(seconds) && seconds >= 0) {
+    return Math.min(seconds * 1_000, 10_000);
+  }
+
+  const retryAt = retryAfter ? Date.parse(retryAfter) : Number.NaN;
+
+  if (Number.isFinite(retryAt)) {
+    return Math.min(Math.max(retryAt - Date.now(), 0), 10_000);
+  }
+
+  return attempt * 1_000;
+}
+
+async function fetchFeed() {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= feedFetchAttempts; attempt += 1) {
+    let retryDelayMilliseconds = attempt * 1_000;
+
+    try {
+      const response = await fetch(feedUrl, {
+        headers: {
+          Accept: "application/rss+xml, application/xml;q=0.9",
+          "User-Agent": "OgnjenPortfolioFeedSync/1.0 (+https://ognjenadzic.com)",
+        },
+        redirect: "manual",
+        signal: AbortSignal.timeout(8_000),
+      });
+
+      if (response.ok) {
+        return response;
+      }
+
+      lastError = new Error(`Substack feed returned ${response.status}`);
+      retryDelayMilliseconds = getRetryDelayMilliseconds(response, attempt);
+    } catch (error) {
+      lastError = error;
+    }
+
+    logFeedAttemptFailure(attempt, lastError);
+
+    if (attempt < feedFetchAttempts) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, retryDelayMilliseconds),
+      );
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Unable to fetch the Substack feed");
+}
+
+async function loadSubstackFeed() {
+  const response = await fetchFeed();
+  const contentLength = Number(response.headers.get("content-length"));
+
+  if (Number.isFinite(contentLength) && contentLength > maxFeedBytes) {
+    throw new Error("Substack feed exceeded the size limit");
+  }
+
+  const rawFeed = await response.text();
+
+  if (Buffer.byteLength(rawFeed, "utf8") > maxFeedBytes) {
+    throw new Error("Substack feed exceeded the size limit");
+  }
+
+  const feed = parser.parse(rawFeed) as ParsedFeed;
+  const rawItems = feed.rss?.channel?.item;
+  const items = rawItems
+    ? Array.isArray(rawItems)
+      ? rawItems
+      : [rawItems]
+    : [];
+
+  const posts = items
+    .map(toPost)
+    .filter((post): post is SubstackPost => post !== null)
+    .sort(
+      (first, second) =>
+        new Date(second.publishedAt).getTime() -
+        new Date(first.publishedAt).getTime(),
+    );
+
+  if (posts.length === 0) {
+    throw new Error("Substack feed contained no valid posts");
+  }
+
+  return posts;
+}
+
+export async function refreshSubstackPosts(store: KVNamespace) {
+  try {
+    const posts = await loadSubstackFeed();
+    const refreshedAt = new Date().toISOString();
+
+    await store.put(substackPostsKey, JSON.stringify(posts), {
+      metadata: { count: posts.length, refreshedAt },
+    });
+
+    console.log(
+      JSON.stringify({
+        event: "substack_feed_refreshed",
+        count: posts.length,
+        refreshedAt,
+      }),
+    );
+
+    return posts;
+  } catch (error) {
+    logFeedError("Unable to refresh the Substack feed", error);
+    throw error;
+  }
+}
+
+export async function getSubstackPosts(
+  store: KVNamespace,
+): Promise<SubstackPost[]> {
+  try {
+    const value: unknown = await store.get(substackPostsKey, "json");
+
+    if (!Array.isArray(value)) {
+      throw new Error("Stored Substack feed is missing or invalid");
+    }
+
+    const posts = value
+      .map(normalizeStoredPost)
+      .filter((post): post is SubstackPost => post !== null);
+
+    if (posts.length === 0 || posts.length !== value.length) {
+      throw new Error("Stored Substack feed contained invalid posts");
+    }
+
+    return posts;
+  } catch (error) {
+    logFeedError("Unable to read the stored Substack feed", error);
+    return bundledFallbackPosts;
+  }
+}
+
+export async function getSubstackPost(slug: string, store: KVNamespace) {
+  const posts = await getSubstackPosts(store);
 
   return posts.find((post) => post.slug === slug) ?? null;
 }

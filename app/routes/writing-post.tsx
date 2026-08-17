@@ -1,12 +1,17 @@
 import { ArticleContent } from "@/components/article-content";
 import { AudioLink } from "@/components/audio-link";
 import { PageBackLink } from "@/components/page-back-link";
+import { cloudflareEnvContext } from "@/lib/cloudflare-context";
 import { formatPostDate } from "@/lib/substack";
 import { getSubstackPost } from "@/lib/substack.server";
 import type { Route } from "./+types/writing-post";
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const post = await getSubstackPost(params.slug);
+export async function loader({ context, params }: Route.LoaderArgs) {
+  const env = context.get(cloudflareEnvContext);
+  const post = await getSubstackPost(
+    params.slug,
+    env.PORTFOLIO_WRITING_FEED,
+  );
 
   if (!post) {
     throw new Response("Not found", { status: 404 });

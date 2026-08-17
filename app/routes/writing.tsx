@@ -1,6 +1,7 @@
 import { PageBackLink } from "@/components/page-back-link";
 import { WritingArchive } from "@/components/writing-archive";
 import styles from "@/components/writing.module.css";
+import { cloudflareEnvContext } from "@/lib/cloudflare-context";
 import { formatPostDate } from "@/lib/substack";
 import { getSubstackPosts } from "@/lib/substack.server";
 import type { Route } from "./+types/writing";
@@ -30,8 +31,9 @@ function cleanExcerpt(description: string) {
     .trim();
 }
 
-export async function loader() {
-  const posts = await getSubstackPosts();
+export async function loader({ context }: Route.LoaderArgs) {
+  const env = context.get(cloudflareEnvContext);
+  const posts = await getSubstackPosts(env.PORTFOLIO_WRITING_FEED);
   const writing = posts.map((post) => ({
     description: cleanExcerpt(post.description),
     formattedDate: formatPostDate(post.publishedAt),

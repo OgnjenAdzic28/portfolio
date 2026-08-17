@@ -7,6 +7,7 @@ import { AudioLink } from "@/components/audio-link";
 import { NavigationAudioLink } from "@/components/navigation-audio-link";
 import { ReadingProgressDate } from "@/components/reading-progress-date";
 import { getGitHubContributions } from "@/lib/github-contributions.server";
+import { cloudflareEnvContext } from "@/lib/cloudflare-context";
 import { featuredShelfItems } from "@/lib/shelf";
 import { formatPostDate } from "@/lib/substack";
 import { getSubstackPosts } from "@/lib/substack.server";
@@ -63,9 +64,10 @@ function cleanExcerpt(description: string) {
     .trim();
 }
 
-export async function loader() {
+export async function loader({ context }: Route.LoaderArgs) {
+  const env = context.get(cloudflareEnvContext);
   const [posts, contributions] = await Promise.all([
-    getSubstackPosts(),
+    getSubstackPosts(env.PORTFOLIO_WRITING_FEED),
     getGitHubContributions(),
   ]);
   const writing = posts.slice(0, 6).map((post) => ({
