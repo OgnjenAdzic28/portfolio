@@ -174,6 +174,9 @@ export function WritingArchive({ posts }: { posts: WritingPost[] }) {
                   searchOpen ? "Close writing search" : "Search writing"
                 }
                 className={styles.searchToggle}
+                data-cuelume-hover="tick"
+                data-cuelume-press="press"
+                data-cuelume-release="release"
                 onClick={toggleSearch}
                 type="button"
               >

@@ -11,6 +11,7 @@ import { AudioLink } from "@/components/audio-link";
 import { RouteShell } from "@/components/route-shell";
 import { SiteChrome } from "@/components/site-chrome";
 import { SiteFooter } from "@/components/site-footer";
+import "@/components/writing.module.css";
 import { socialLinks } from "@/lib/social-links";
 import instrumentSerifLatinExtUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-ext-400-normal.woff2?url";
 import instrumentSerifLatinUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
@@ -23,7 +24,7 @@ const description =
   "Ognjen Adzic builds agent workflows and dependable software. He is currently building Invokeable and previously co-founded Pingless and ArchiStella.";
 const appStylesHref = appStylesUrl.replace(/\?t=\d+$/, "");
 const documentInit =
-  "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.dataset.sectionRevealEnabled='true';setTimeout(function(){if(!document.documentElement.dataset.sectionRevealReady){delete document.documentElement.dataset.sectionRevealEnabled}},2500)}}catch(e){}";
+  "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}";
 const instrumentSerifFontFaces = `
 @font-face {
   font-family: "Instrument Serif";
@@ -199,7 +200,10 @@ export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
                     }, 700);
                   }}
                   prefetch="render"
+                  pressSound="press"
+                  releaseSound="release"
                   sound="home"
+                  toggleSound={false}
                   viewTransition
                 >
                   Back home

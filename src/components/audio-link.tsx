@@ -5,7 +5,10 @@ import { Link, type LinkProps } from "react-router";
 type AudioLinkProps = ComponentPropsWithRef<"a"> & {
   hoverSound?: SoundName | false;
   prefetch?: LinkProps["prefetch"];
+  pressSound?: SoundName | false;
+  releaseSound?: SoundName | false;
   sound?: "default" | "home";
+  toggleSound?: SoundName | false;
   viewTransition?: boolean;
 };
 
@@ -23,7 +26,10 @@ export function AudioLink({
   download,
   onClick,
   prefetch,
+  pressSound,
   ref,
+  releaseSound,
+  toggleSound = "sparkle",
   viewTransition,
   ...props
 }: AudioLinkProps) {
@@ -40,7 +46,9 @@ export function AudioLink({
     return (
       <Link
         data-cuelume-hover={resolvedHoverSound}
-        data-cuelume-toggle="sparkle"
+        data-cuelume-press={pressSound || undefined}
+        data-cuelume-release={releaseSound || undefined}
+        data-cuelume-toggle={toggleSound || undefined}
         onClick={onClick}
         prefetch={prefetch ?? "intent"}
         ref={ref}
@@ -55,7 +63,9 @@ export function AudioLink({
   return (
     <a
       data-cuelume-hover={resolvedHoverSound}
-      data-cuelume-toggle="sparkle"
+      data-cuelume-press={pressSound || undefined}
+      data-cuelume-release={releaseSound || undefined}
+      data-cuelume-toggle={toggleSound || undefined}
       download={download}
       href={href}
       onClick={onClick}
