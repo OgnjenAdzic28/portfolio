@@ -1,48 +1,27 @@
+import { useEffect, useRef, useState } from "react";
 import { AudioLink } from "@/components/audio-link";
 import { AudioToggle } from "@/components/audio-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { socialLinks } from "@/lib/social-links";
+import type { LatestPortfolioCommit } from "@/lib/github-latest-commit.server";
 
-const socialLinks = [
-  {
-    href: "https://x.com/OgnjenAdzic",
-    label: "X:",
-    note: "thoughts before I overthink them",
-  },
-  {
-    href: "https://github.com/OgnjenAdzic28",
-    label: "GitHub:",
-    note: "the work behind the polished pages",
-  },
-  {
-    href: "https://www.linkedin.com/in/ognjenadzic",
-    label: "LinkedIn:",
-    note: "the useful career summary",
-  },
-  {
-    href: "https://www.reddit.com/user/OgnjenAdzic/",
-    label: "Reddit:",
-    note: "where I mostly read and occasionally reply",
-  },
-  {
-    href: "https://ognjenadzic.substack.com",
-    label: "Substack:",
-    note: "longer thoughts that needed more room",
-  },
-  {
-    href: "mailto:oginjo28@gmail.com",
-    label: "email:",
-    note: "for anything that needs a real reply",
-  },
-] as const;
+type LatestCommitData = LatestPortfolioCommit;
 
-type LatestCommitData = {
-  additions: number;
-  committedAt: string;
-  deletions: number;
-  sha: string;
-  url: string;
-};
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isLatestCommitData(value: unknown): value is LatestCommitData {
+  return (
+    isRecord(value) &&
+    typeof value.additions === "number" &&
+    typeof value.committedAt === "string" &&
+    typeof value.deletions === "number" &&
+    typeof value.sha === "string" &&
+    typeof value.url === "string"
+  );
+}
 
 function CommitIcon() {
   return (
@@ -184,9 +163,63 @@ export function SiteFooter({
   latestCommit: LatestCommitData | null;
 }) {
   const year = new Date().getFullYear();
+  const [resolvedCommit, setResolvedCommit] = useState(latestCommit);
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (latestCommit) {
+      return;
+    }
+
+    const footer = footerRef.current;
+
+    if (!footer) {
+      return;
+    }
+
+    let controller: AbortController | null = null;
+    let requested = false;
+    const loadWhenRevealed = () => {
+      const routeBottom = document
+        .querySelector<HTMLElement>(".route-shell")
+        ?.getBoundingClientRect().bottom;
+
+      if (requested || routeBottom === undefined || routeBottom >= window.innerHeight) {
+        return;
+      }
+
+      requested = true;
+      window.removeEventListener("scroll", loadWhenRevealed);
+      controller = new AbortController();
+
+      void fetch("/resources/site-data", {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((value: unknown) => {
+          if (isRecord(value) && isLatestCommitData(value.latestCommit)) {
+            setResolvedCommit(value.latestCommit);
+          }
+        })
+        .catch((error: unknown) => {
+          if (!(error instanceof DOMException && error.name === "AbortError")) {
+            console.error("Unable to refresh the latest Portfolio commit", error);
+          }
+        });
+    };
+
+    window.addEventListener("scroll", loadWhenRevealed, { passive: true });
+    loadWhenRevealed();
+
+    return () => {
+      window.removeEventListener("scroll", loadWhenRevealed);
+      controller?.abort();
+    };
+  }, [latestCommit]);
 
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" ref={footerRef}>
       <div className="site-footer-noise" aria-hidden="true" />
       <svg className="site-footer-noise-defs" aria-hidden="true">
         <filter id="site-footer-noise-filter">
@@ -266,7 +299,7 @@ export function SiteFooter({
         </section>
 
         <div className="site-footer-bottom">
-          <LatestCommit commit={latestCommit} />
+          <LatestCommit commit={resolvedCommit} />
 
           <small className="site-footer-meta">
             <span>

@@ -1,4 +1,11 @@
-import type { CSSProperties } from "react";
+import {
+  Suspense,
+  type CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Await } from "react-router";
 import { ProductMentions } from "@/components/product-mentions";
 import { CharacterSwapText } from "@/components/character-swap-text";
 import { ContributionGraph } from "@/components/contribution-graph";
@@ -6,11 +13,13 @@ import { MediaShelf } from "@/components/media-shelf";
 import { AudioLink } from "@/components/audio-link";
 import { NavigationAudioLink } from "@/components/navigation-audio-link";
 import { ReadingProgressDate } from "@/components/reading-progress-date";
-import { getGitHubContributions } from "@/lib/github-contributions.server";
-import { cloudflareEnvContext } from "@/lib/cloudflare-context";
+import {
+  emptyContributions,
+  parseHomeData,
+  toHomeWriting,
+} from "@/lib/home-data";
 import { featuredShelfItems } from "@/lib/shelf";
-import { formatPostDate } from "@/lib/substack";
-import { getSubstackPosts } from "@/lib/substack.server";
+import { bundledFallbackPosts } from "@/lib/substack.server";
 import type { Route } from "./+types/home";
 
 const projects = [
@@ -56,29 +65,11 @@ function revealStyle(index: number): RevealStyle {
   return { "--reveal-delay": `${40 + index * 45}ms` };
 }
 
-function cleanExcerpt(description: string) {
-  return description
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = context.get(cloudflareEnvContext);
-  const [posts, contributions] = await Promise.all([
-    getSubstackPosts(env.PORTFOLIO_WRITING_FEED),
-    getGitHubContributions(),
-  ]);
-  const writing = posts.slice(0, 6).map((post) => ({
-    description: cleanExcerpt(post.description),
-    formattedDate: formatPostDate(post.publishedAt),
-    publishedAt: post.publishedAt,
-    slug: post.slug,
-    title: post.title,
-  }));
-
-  return { contributions, writing };
+export function loader() {
+  return {
+    contributions: emptyContributions,
+    writing: toHomeWriting(bundledFallbackPosts),
+  };
 }
 
 export function headers() {
@@ -88,11 +79,52 @@ export function headers() {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { contributions, writing } = loaderData;
-  const emptyWritingSlots = Array.from(
-    { length: Math.max(0, 3 - writing.length) },
-    (_, index) => index,
-  );
+  const [homeData, setHomeData] = useState(loaderData);
+  const homeDataTriggerRef = useRef<HTMLElement>(null);
+  const { contributions, writing } = homeData;
+
+  useEffect(() => {
+    const trigger = homeDataTriggerRef.current;
+
+    if (!trigger) {
+      return;
+    }
+
+    let controller: AbortController | null = null;
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) {
+        return;
+      }
+
+      observer.disconnect();
+      controller = new AbortController();
+
+      void fetch("/resources/home-data", {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((value: unknown) => {
+          const parsed = parseHomeData(value);
+
+          if (parsed) {
+            setHomeData(parsed);
+          }
+        })
+        .catch((error: unknown) => {
+          if (!(error instanceof DOMException && error.name === "AbortError")) {
+            console.error("Unable to refresh the Portfolio home data", error);
+          }
+        });
+    });
+
+    observer.observe(trigger);
+
+    return () => {
+      observer.disconnect();
+      controller?.abort();
+    };
+  }, []);
 
   return (
     <main className="site-shell page-reveal-root home-reveal-root" id="top">
@@ -255,64 +287,113 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {writing.length > 0 ? (
-        <section className="editorial-section" id="writing">
-          <header className="section-heading">
-            <h2>Recent writing</h2>
-            <p>
-              I write about problems that keep bothering me until I can explain them
-              without hand-waving.
-            </p>
-          </header>
-
-          <div className="wide-bleed article-grid">
-            {writing.map((post) => (
-              <NavigationAudioLink
-                className="editorial-card article-card"
-                href={`/writing/${post.slug}`}
-                key={post.slug}
-                transitionType="writing-forward"
-              >
-                <span className="card-copy">
-                  <span className="card-title">{post.title}</span>
-                  <span className="card-description">
-                    {post.description}
+      <Suspense
+        fallback={
+          <>
+            <section className="editorial-section" id="writing">
+              <header className="section-heading">
+                <h2>Recent writing</h2>
+                <p>
+                  I write about problems that keep bothering me until I can
+                  explain them without hand-waving.
+                </p>
+              </header>
+              <div className="wide-bleed article-grid">
+                {Array.from({ length: 3 }, (_, slot) => (
+                  <span
+                    aria-hidden="true"
+                    className="editorial-card article-card writing-empty-slot"
+                    key={slot}
+                  >
+                    <span className="writing-empty-mark" />
                   </span>
-                </span>
-                <span className="card-meta">
-                  <ReadingProgressDate
-                    dateTime={post.publishedAt}
-                    formattedDate={post.formattedDate}
-                    slug={post.slug}
-                  />
-                </span>
-              </NavigationAudioLink>
-            ))}
-            {emptyWritingSlots.map((slot) => (
-              <span
-                aria-hidden="true"
-                className="editorial-card article-card writing-empty-slot"
-                key={slot}
-              >
-                <span className="writing-empty-mark" />
-              </span>
-            ))}
-          </div>
-          {emptyWritingSlots.length > 0 ? (
-            <p className="writing-coming-soon">
-              More writing is on the way. The empty space is intentional.
+                ))}
+              </div>
+            </section>
+            <p className="section-bridge">
+              Writing gives me room to think. Code is less polite about bad
+              ideas.
             </p>
-          ) : null}
-        </section>
-      ) : null}
+          </>
+        }
+      >
+        <Await resolve={writing}>
+          {(resolvedWriting) => {
+            const emptyWritingSlots = Array.from(
+              { length: Math.max(0, 3 - resolvedWriting.length) },
+              (_, index) => index,
+            );
 
-      {writing.length > 0 ? (
-        <p className="section-bridge">
-          Writing gives me room to think. Code is less polite about bad ideas.
-        </p>
-      ) : null}
+            if (resolvedWriting.length === 0) {
+              return null;
+            }
 
-      <section className="editorial-section" id="work">
+            return (
+              <>
+                <section className="editorial-section" id="writing">
+                  <header className="section-heading">
+                    <h2>Recent writing</h2>
+                    <p>
+                      I write about problems that keep bothering me until I can
+                      explain them without hand-waving.
+                    </p>
+                  </header>
+
+                  <div className="wide-bleed article-grid">
+                    {resolvedWriting.map((post) => (
+                      <NavigationAudioLink
+                        className="editorial-card article-card"
+                        href={`/writing/${post.slug}`}
+                        key={post.slug}
+                        transitionType="writing-forward"
+                      >
+                        <span className="card-copy">
+                          <span className="card-title">{post.title}</span>
+                          <span className="card-description">
+                            {post.description}
+                          </span>
+                        </span>
+                        <span className="card-meta">
+                          <ReadingProgressDate
+                            dateTime={post.publishedAt}
+                            formattedDate={post.formattedDate}
+                            slug={post.slug}
+                          />
+                        </span>
+                      </NavigationAudioLink>
+                    ))}
+                    {emptyWritingSlots.map((slot) => (
+                      <span
+                        aria-hidden="true"
+                        className="editorial-card article-card writing-empty-slot"
+                        key={slot}
+                      >
+                        <span className="writing-empty-mark" />
+                      </span>
+                    ))}
+                  </div>
+                  {emptyWritingSlots.length > 0 ? (
+                    <p className="writing-coming-soon">
+                      More writing is on the way. The empty space is intentional.
+                    </p>
+                  ) : null}
+                </section>
+
+                <p className="section-bridge">
+                  Writing gives me room to think. Code is less polite about bad
+                  ideas.
+                </p>
+              </>
+            );
+          }}
+        </Await>
+      </Suspense>
+
+      <section
+        className="editorial-section"
+        id="work"
+        ref={homeDataTriggerRef}
+      >
         <header className="section-heading">
           <h2>Selected work</h2>
           <p>
@@ -347,30 +428,53 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      <section className="editorial-section" id="contributions">
-        <header className="section-heading">
-          <h2>Code over time</h2>
-          <p>
-            {contributions.available && contributions.total !== null
-              ? `${contributions.total.toLocaleString()} contributions across the past year on GitHub. It measures activity, not whether the code was useful.`
-              : "A live view of my past year on GitHub. The calendar is temporarily unavailable, but the work is still there."}
-          </p>
-        </header>
+      <Suspense
+        fallback={
+          <section className="editorial-section" id="contributions">
+            <header className="section-heading">
+              <h2>Code over time</h2>
+              <p>A live view of my past year on GitHub.</p>
+            </header>
+            <div className="wide-bleed contribution-panel">
+              <div className="contribution-heatmap" />
+            </div>
+            <p className="section-afterword">
+              GitHub can count changes. It cannot tell when deleting ten lines
+              was the most useful part of the day.
+            </p>
+          </section>
+        }
+      >
+        <Await resolve={contributions}>
+          {(resolvedContributions) => (
+            <section className="editorial-section" id="contributions">
+              <header className="section-heading">
+                <h2>Code over time</h2>
+                <p>
+                  {resolvedContributions.available &&
+                  resolvedContributions.total !== null
+                    ? `${resolvedContributions.total.toLocaleString()} contributions across the past year on GitHub. It measures activity, not whether the code was useful.`
+                    : "A live view of my past year on GitHub. The calendar is temporarily unavailable, but the work is still there."}
+                </p>
+              </header>
 
-        {contributions.columns.length > 0 ? (
-          <div className="wide-bleed contribution-panel">
-            <ContributionGraph
-              counts={contributions.counts}
-              data={contributions.columns}
-            />
-          </div>
-        ) : null}
+              {resolvedContributions.columns.length > 0 ? (
+                <div className="wide-bleed contribution-panel">
+                  <ContributionGraph
+                    counts={resolvedContributions.counts}
+                    data={resolvedContributions.columns}
+                  />
+                </div>
+              ) : null}
 
-        <p className="section-afterword">
-          GitHub can count changes. It cannot tell when deleting ten lines was the
-          most useful part of the day.
-        </p>
-      </section>
+              <p className="section-afterword">
+                GitHub can count changes. It cannot tell when deleting ten lines
+                was the most useful part of the day.
+              </p>
+            </section>
+          )}
+        </Await>
+      </Suspense>
 
       <MediaShelf items={featuredShelfItems} />
     </main>

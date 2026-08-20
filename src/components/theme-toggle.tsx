@@ -1,5 +1,5 @@
 import { play } from "cuelume";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useSyncExternalStore } from "react";
 import { ThemeModeIcon } from "@/components/theme-mode-icon";
 import { Tooltip } from "@/components/ui/tooltip";
 
@@ -25,9 +25,13 @@ function getPreferredTheme(): Theme {
 }
 
 function getStoredTheme(): Theme | null {
-  const storedTheme = window.localStorage.getItem(storageKey);
+  try {
+    const storedTheme = window.localStorage.getItem(storageKey);
 
-  return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+    return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+  } catch {
+    return null;
+  }
 }
 
 function getSnapshot(): Theme {
@@ -102,6 +106,14 @@ export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
   const nextTheme = theme === "dark" ? "light" : "dark";
   const label = `Switch to ${nextTheme} mode`;
+
+  useLayoutEffect(() => {
+    const preferredTheme = getStoredTheme() ?? getPreferredTheme();
+
+    if (document.documentElement.dataset.theme !== preferredTheme) {
+      applyTheme(preferredTheme, { persist: false });
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

@@ -1,15 +1,17 @@
 import sanitizeHtml from "sanitize-html";
 import { XMLParser } from "fast-xml-parser";
 import { substackUrl, type SubstackPost } from "@/lib/substack";
+import { withTimedCache } from "@/lib/timed-cache.server";
 
 const feedUrl = `${substackUrl}/feed`;
 const substackOrigin = new URL(substackUrl).origin;
 const maxFeedBytes = 2_000_000;
 const postSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const feedFetchAttempts = 3;
+const liveFeedCacheMilliseconds = 60_000;
 export const substackPostsKey = "substack-posts:v1";
 
-const bundledFallbackPosts: SubstackPost[] = [
+export const bundledFallbackPosts: SubstackPost[] = [
   {
     slug: "a-signal-is-not-a-guarantee",
     title: "A signal is not a guarantee",
@@ -399,6 +401,14 @@ async function loadSubstackFeed() {
   return posts;
 }
 
+function getLiveSubstackPosts() {
+  return withTimedCache(
+    "substack-live-feed",
+    liveFeedCacheMilliseconds,
+    loadSubstackFeed,
+  );
+}
+
 export async function refreshSubstackPosts(store: KVNamespace) {
   try {
     const posts = await loadSubstackFeed();
@@ -444,11 +454,24 @@ export async function getSubstackPosts(
     return posts;
   } catch (error) {
     logFeedError("Unable to read the stored Substack feed", error);
-    return bundledFallbackPosts;
+
+    try {
+      return await getLiveSubstackPosts();
+    } catch (feedError) {
+      logFeedError("Unable to load the live Substack feed", feedError);
+      return bundledFallbackPosts;
+    }
   }
 }
 
 export async function getSubstackPost(slug: string, store: KVNamespace) {
+  try {
+    const posts = await getLiveSubstackPosts();
+    return posts.find((post) => post.slug === slug) ?? null;
+  } catch (error) {
+    logFeedError("Unable to load the live Substack article", error);
+  }
+
   const posts = await getSubstackPosts(store);
 
   return posts.find((post) => post.slug === slug) ?? null;

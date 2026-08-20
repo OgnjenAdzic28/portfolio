@@ -7,19 +7,21 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { AudioLink } from "@/components/audio-link";
 import { RouteShell } from "@/components/route-shell";
 import { SiteChrome } from "@/components/site-chrome";
 import { SiteFooter } from "@/components/site-footer";
-import { getLatestPortfolioCommit } from "@/lib/github-latest-commit.server";
+import { socialLinks } from "@/lib/social-links";
 import instrumentSerifLatinExtUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-ext-400-normal.woff2?url";
 import instrumentSerifLatinUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
 import type { Route } from "./+types/root";
-import "./app.css";
+import appStylesUrl from "./app.css?url";
 
 const siteUrl = "https://ognjenadzic.com";
 const siteName = "Ognjen Adzic";
 const description =
   "Ognjen Adzic builds agent workflows and dependable software. He is currently building Invokeable and previously co-founded Pingless and ArchiStella.";
+const appStylesHref = appStylesUrl.replace(/\?t=\d+$/, "");
 const documentInit =
   "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.dataset.sectionRevealEnabled='true';setTimeout(function(){if(!document.documentElement.dataset.sectionRevealReady){delete document.documentElement.dataset.sectionRevealEnabled}},2500)}}catch(e){}";
 const instrumentSerifFontFaces = `
@@ -40,8 +42,19 @@ const instrumentSerifFontFaces = `
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }`;
 
-export async function loader() {
-  return { latestCommit: await getLatestPortfolioCommit() };
+const missingPageArt = String.raw`
+             /\_/\          .--------------------------.
+            ( o.o )         | $ find missing-page      |
+             > ^ <          | find: no such route      |
+            /|   |\         '--------------------------'
+           / |___| \              |          |
+          /_________\_____________|__________|____
+         /                                             \
+        /_______________________________________________\
+`.trimEnd();
+
+export function loader() {
+  return { latestCommit: null };
 }
 
 export const meta: Route.MetaFunction = () => [
@@ -71,6 +84,7 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export const links: Route.LinksFunction = () => [
+  { rel: "stylesheet", href: appStylesHref },
   { rel: "icon", href: "/favicon.ico", sizes: "16x16 32x32 48x48" },
   { rel: "icon", href: "/portfolio-icon.png", type: "image/png" },
   { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
@@ -115,18 +129,104 @@ export default function App({ loaderData }: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
   const notFound = isRouteErrorResponse(error) && error.status === 404;
-  const message = notFound ? "That page is not here." : "Something went wrong.";
+
+  if (notFound) {
+    return (
+      <>
+        <SiteChrome />
+        <div className="route-shell">
+          <main className="site-shell not-found-shell">
+            <section
+              className="not-found-section"
+              aria-labelledby="not-found-title"
+            >
+              <div className="not-found-art" aria-hidden="true">
+                <pre>{missingPageArt}</pre>
+              </div>
+
+              <div className="not-found-copy">
+                <h1 id="not-found-title">this page wandered off.</h1>
+                <p>
+                  I may have moved it, deleted it, or linked to something that
+                  never existed. The URL could also be wrong. Hard to say.
+                </p>
+                <p>
+                  The rest of the site should still be where I left it. If the
+                  broken link is mine, find me on{" "}
+                  {socialLinks.map((link, index) => (
+                    <span className="not-found-social-item" key={link.label}>
+                      {index > 0 ? (
+                        <span
+                          aria-hidden="true"
+                          className="not-found-social-separator"
+                        >
+                          {" / "}
+                        </span>
+                      ) : null}
+                      <AudioLink
+                        className="editorial-link"
+                        href={link.href}
+                        rel={link.href.startsWith("http") ? "me noreferrer" : undefined}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                      >
+                        {link.label.slice(0, -1)}
+                      </AudioLink>
+                    </span>
+                  ))}{" "}
+                  and tell me what I missed.
+                </p>
+                <AudioLink
+                  className="not-found-home-link site-footer-control"
+                  href="/"
+                  onClick={(event) => {
+                    if (
+                      event.defaultPrevented ||
+                      event.button !== 0 ||
+                      event.metaKey ||
+                      event.ctrlKey ||
+                      event.shiftKey ||
+                      event.altKey
+                    ) {
+                      return;
+                    }
+
+                    document.documentElement.dataset.routeTransition =
+                      "writing-back";
+                    window.setTimeout(() => {
+                      delete document.documentElement.dataset.routeTransition;
+                    }, 700);
+                  }}
+                  prefetch="render"
+                  sound="home"
+                  viewTransition
+                >
+                  Back home
+                </AudioLink>
+              </div>
+            </section>
+          </main>
+        </div>
+        <SiteFooter latestCommit={loaderData?.latestCommit ?? null} />
+      </>
+    );
+  }
 
   return (
-    <main className="site-shell page-reveal-root">
-      <section className="hero editorial-section">
-        <header className="hero-heading">
-          <h1>{notFound ? "404" : "Error"}</h1>
-          <p className="hero-kicker">{message}</p>
-        </header>
-      </section>
-    </main>
+    <>
+      <SiteChrome />
+      <div className="route-shell">
+        <main className="site-shell">
+          <section className="hero editorial-section">
+            <header className="hero-heading">
+              <h1>Error</h1>
+              <p className="hero-kicker">Something went wrong.</p>
+            </header>
+          </section>
+        </main>
+      </div>
+      <SiteFooter latestCommit={loaderData?.latestCommit ?? null} />
+    </>
   );
 }
