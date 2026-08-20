@@ -11,7 +11,7 @@ import { AudioLink } from "@/components/audio-link";
 import { RouteShell } from "@/components/route-shell";
 import { SiteChrome } from "@/components/site-chrome";
 import { SiteFooter } from "@/components/site-footer";
-import "@/components/writing.module.css";
+import writingStylesCss from "@/components/writing.module.css?inline";
 import { socialLinks } from "@/lib/social-links";
 import instrumentSerifLatinExtUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-ext-400-normal.woff2?url";
 import instrumentSerifLatinUrl from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
@@ -107,6 +107,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <Meta />
         <Links />
         <style dangerouslySetInnerHTML={{ __html: instrumentSerifFontFaces }} />
+        <style dangerouslySetInnerHTML={{ __html: writingStylesCss }} />
         <script dangerouslySetInnerHTML={{ __html: documentInit }} />
       </head>
       <body className="min-h-full">
