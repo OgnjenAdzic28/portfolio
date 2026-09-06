@@ -2207,7 +2207,6 @@ body {
 }
 
 .taste-grid {
-  width: min(840px, calc(100vw - 48px));
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   list-style: none;
@@ -3090,10 +3089,6 @@ html[data-theme="dark"] .theme-toggle-icon-light {
   .wide-bleed {
     width: min(1024px, calc(100vw - 48px));
   }
-
-  .taste-grid {
-    width: min(840px, calc(100vw - 48px));
-  }
 }
 
 @media (max-width: 1023px) {
@@ -3275,7 +3270,6 @@ html[data-theme="dark"] .theme-toggle-icon-light {
   }
 
   .taste-grid {
-    width: calc(100% + 8px);
     gap: 4px;
     padding: 4px;
   }
