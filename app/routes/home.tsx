@@ -18,8 +18,9 @@ import {
   parseHomeData,
   toHomeWriting,
 } from "@/lib/home-data";
+import { cloudflareEnvContext } from "@/lib/cloudflare-context";
 import { featuredShelfItems } from "@/lib/shelf";
-import { bundledFallbackPosts } from "@/lib/substack.server";
+import { getSubstackPosts } from "@/lib/substack.server";
 import type { Route } from "./+types/home";
 
 const projects = [
@@ -65,23 +66,30 @@ function revealStyle(index: number): RevealStyle {
   return { "--reveal-delay": `${40 + index * 45}ms` };
 }
 
-export function loader() {
+export async function loader({ context }: Route.LoaderArgs) {
+  const env = context.get(cloudflareEnvContext);
+  const posts = await getSubstackPosts(env.PORTFOLIO_WRITING_FEED);
+
   return {
     contributions: emptyContributions,
-    writing: toHomeWriting(bundledFallbackPosts),
+    writing: toHomeWriting(posts),
   };
 }
 
 export function headers() {
   return {
-    "Cache-Control": "s-maxage=60, stale-while-revalidate=240",
+    "Cache-Control": "no-store",
   };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const [homeData, setHomeData] = useState(loaderData);
+  const [contributions, setContributions] = useState(loaderData.contributions);
   const homeDataTriggerRef = useRef<HTMLElement>(null);
-  const { contributions, writing } = homeData;
+  const { writing } = loaderData;
+  const emptyWritingSlots = Array.from(
+    { length: Math.max(0, 3 - writing.length) },
+    (_, index) => index,
+  );
 
   useEffect(() => {
     const trigger = homeDataTriggerRef.current;
@@ -108,7 +116,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           const parsed = parseHomeData(value);
 
           if (parsed) {
-            setHomeData(parsed);
+            setContributions(parsed.contributions);
           }
         })
         .catch((error: unknown) => {
@@ -287,107 +295,62 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      <Suspense
-        fallback={
-          <>
-            <section className="editorial-section" id="writing">
-              <header className="section-heading">
-                <h2>Recent writing</h2>
-                <p>
-                  I write about problems that keep bothering me until I can
-                  explain them without hand-waving.
-                </p>
-              </header>
-              <div className="wide-bleed article-grid">
-                {Array.from({ length: 3 }, (_, slot) => (
-                  <span
-                    aria-hidden="true"
-                    className="editorial-card article-card writing-empty-slot"
-                    key={slot}
-                  >
-                    <span className="writing-empty-mark" />
+      {writing.length > 0 ? (
+        <>
+          <section className="editorial-section" id="writing">
+            <header className="section-heading">
+              <h2>Recent writing</h2>
+              <p>
+                I write about problems that keep bothering me until I can
+                explain them without hand-waving.
+              </p>
+            </header>
+
+            <div className="wide-bleed article-grid">
+              {writing.map((post) => (
+                <NavigationAudioLink
+                  className="editorial-card article-card"
+                  href={`/writing/${post.slug}`}
+                  key={post.slug}
+                  transitionType="writing-forward"
+                >
+                  <span className="card-copy">
+                    <span className="card-title">{post.title}</span>
+                    <span className="card-description">
+                      {post.description}
+                    </span>
                   </span>
-                ))}
-              </div>
-            </section>
-            <p className="section-bridge">
-              Writing gives me room to think. Code is less polite about bad
-              ideas.
-            </p>
-          </>
-        }
-      >
-        <Await resolve={writing}>
-          {(resolvedWriting) => {
-            const emptyWritingSlots = Array.from(
-              { length: Math.max(0, 3 - resolvedWriting.length) },
-              (_, index) => index,
-            );
+                  <span className="card-meta">
+                    <ReadingProgressDate
+                      dateTime={post.publishedAt}
+                      formattedDate={post.formattedDate}
+                      slug={post.slug}
+                    />
+                  </span>
+                </NavigationAudioLink>
+              ))}
+              {emptyWritingSlots.map((slot) => (
+                <span
+                  aria-hidden="true"
+                  className="editorial-card article-card writing-empty-slot"
+                  key={slot}
+                >
+                  <span className="writing-empty-mark" />
+                </span>
+              ))}
+            </div>
+            {emptyWritingSlots.length > 0 ? (
+              <p className="writing-coming-soon">
+                More writing is on the way. The empty space is intentional.
+              </p>
+            ) : null}
+          </section>
 
-            if (resolvedWriting.length === 0) {
-              return null;
-            }
-
-            return (
-              <>
-                <section className="editorial-section" id="writing">
-                  <header className="section-heading">
-                    <h2>Recent writing</h2>
-                    <p>
-                      I write about problems that keep bothering me until I can
-                      explain them without hand-waving.
-                    </p>
-                  </header>
-
-                  <div className="wide-bleed article-grid">
-                    {resolvedWriting.map((post) => (
-                      <NavigationAudioLink
-                        className="editorial-card article-card"
-                        href={`/writing/${post.slug}`}
-                        key={post.slug}
-                        transitionType="writing-forward"
-                      >
-                        <span className="card-copy">
-                          <span className="card-title">{post.title}</span>
-                          <span className="card-description">
-                            {post.description}
-                          </span>
-                        </span>
-                        <span className="card-meta">
-                          <ReadingProgressDate
-                            dateTime={post.publishedAt}
-                            formattedDate={post.formattedDate}
-                            slug={post.slug}
-                          />
-                        </span>
-                      </NavigationAudioLink>
-                    ))}
-                    {emptyWritingSlots.map((slot) => (
-                      <span
-                        aria-hidden="true"
-                        className="editorial-card article-card writing-empty-slot"
-                        key={slot}
-                      >
-                        <span className="writing-empty-mark" />
-                      </span>
-                    ))}
-                  </div>
-                  {emptyWritingSlots.length > 0 ? (
-                    <p className="writing-coming-soon">
-                      More writing is on the way. The empty space is intentional.
-                    </p>
-                  ) : null}
-                </section>
-
-                <p className="section-bridge">
-                  Writing gives me room to think. Code is less polite about bad
-                  ideas.
-                </p>
-              </>
-            );
-          }}
-        </Await>
-      </Suspense>
+          <p className="section-bridge">
+            Writing gives me room to think. Code is less polite about bad ideas.
+          </p>
+        </>
+      ) : null}
 
       <section
         className="editorial-section"

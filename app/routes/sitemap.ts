@@ -48,7 +48,7 @@ export async function loader({ context }: Route.LoaderArgs) {
   return new Response(xml, {
     headers: {
       ...getSecurityHeaders(),
-      "Cache-Control": "s-maxage=60, stale-while-revalidate=240",
+      "Cache-Control": "no-store",
       "Content-Type": "application/xml; charset=utf-8",
     },
   });

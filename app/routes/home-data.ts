@@ -11,11 +11,8 @@ export async function loader({ context }: Route.LoaderArgs) {
     getGitHubContributions(),
   ]);
 
-  return Response.json({ contributions, writing: toHomeWriting(posts) });
-}
-
-export function headers() {
-  return {
-    "Cache-Control": "s-maxage=60, stale-while-revalidate=240",
-  };
+  return Response.json(
+    { contributions, writing: toHomeWriting(posts) },
+    { headers: { "Cache-Control": "no-store" } },
+  );
 }

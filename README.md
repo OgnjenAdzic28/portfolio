@@ -19,9 +19,16 @@ Run the production checks with:
 
 ```bash
 npm run lint
+npm test
 npm run typecheck
 npm run build
 ```
+
+Recent writing is loaded on the server before the home page renders and stays
+unchanged while the GitHub graph loads. Healthy requests check Substack with a
+10-second in-memory cache; pages do not use stale HTML caching. A one-minute cron
+saves an outage fallback in KV. A failed live request falls back after two seconds.
+Substack controls when newly published posts become available in its RSS feed.
 
 ## Resume
 
