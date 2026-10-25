@@ -44,11 +44,10 @@
   --contribution-4: #332e27;
   --commit-additions: #617647;
   --commit-deletions: #b3594f;
-  --route-exit-dur: 160ms;
-  --route-enter-dur: 420ms;
-  --route-enter-delay: 70ms;
-  --route-enter-distance: 12px;
-  --route-enter-blur: 3px;
+  --route-exit-dur: 80ms;
+  --route-enter-dur: 160ms;
+  --route-enter-delay: 0ms;
+  --route-enter-distance: 4px;
   --route-enter-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --card: var(--surface);
   --card-foreground: var(--foreground);
@@ -1040,7 +1039,7 @@ html[data-section-reveal-enabled]
 
 html[data-theme-transition="warp"]::view-transition-old(root),
 html[data-theme-transition="warp"]::view-transition-new(root) {
-  animation-duration: 680ms;
+  animation-duration: 200ms;
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   backface-visibility: hidden;
@@ -1048,50 +1047,29 @@ html[data-theme-transition="warp"]::view-transition-new(root) {
 }
 
 html[data-theme-transition="warp"]::view-transition-old(root) {
-  animation-name: theme-blur-old;
+  animation-name: theme-fade-old;
   z-index: 0;
 }
 
 html[data-theme-transition="warp"]::view-transition-new(root) {
-  animation-name: theme-blur-new;
-  will-change: filter, opacity;
+  animation-name: theme-fade-new;
   z-index: 1;
 }
 
-@keyframes theme-blur-new {
-  0% {
-    filter: blur(18px) brightness(1.04);
+@keyframes theme-fade-new {
+  from {
     opacity: 0;
   }
-
-  18% {
-    opacity: 0;
-  }
-
-  64% {
-    filter: blur(5px) brightness(1.015);
-    opacity: 1;
-  }
-
-  100% {
-    filter: blur(0) brightness(1);
+  to {
     opacity: 1;
   }
 }
 
-@keyframes theme-blur-old {
-  0% {
-    filter: blur(0) brightness(1);
+@keyframes theme-fade-old {
+  from {
     opacity: 1;
   }
-
-  52% {
-    filter: blur(4px) brightness(0.99);
-    opacity: 0.72;
-  }
-
-  100% {
-    filter: blur(10px) brightness(0.98);
+  to {
     opacity: 0;
   }
 }
@@ -1118,7 +1096,6 @@ html[data-route-transition]::view-transition-new(root) {
 @keyframes route-content-in {
   from {
     opacity: 0;
-    filter: blur(var(--route-enter-blur));
     transform: translateY(var(--route-enter-distance));
   }
 }
@@ -1277,17 +1254,15 @@ body {
   left: 0;
   height: 64px;
   opacity: 0;
-  filter: blur(12px);
   pointer-events: none;
   transform: translateY(-6px);
-  transition-duration: 700ms;
-  transition-property: opacity, filter, transform;
+  transition-duration: 180ms;
+  transition-property: opacity, transform;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-header[data-visible="true"] {
   opacity: 1;
-  filter: blur(0);
   pointer-events: auto;
   transform: translateY(0);
 }
@@ -2149,6 +2124,74 @@ body {
 
 .contribution-tooltip {
   font-family: var(--font-geist-sans), "Geist", ui-sans-serif, sans-serif;
+}
+
+.contribution-months {
+  position: relative;
+  height: 26px;
+  margin-left: 28px;
+}
+
+.contribution-months > span {
+  position: absolute;
+  top: 0;
+}
+
+.contribution-plot {
+  position: relative;
+  margin-left: 28px;
+}
+
+.contribution-calendar {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.contribution-calendar rect:hover {
+  stroke: var(--foreground);
+  stroke-width: 1px;
+}
+
+.contribution-weekday {
+  position: absolute;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
+}
+
+.contribution-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.contribution-legend-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.contribution-day-tooltip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  border: 1px solid var(--graph-line);
+  border-radius: 8px;
+  background: var(--chart-tooltip-background);
+  color: var(--chart-tooltip-foreground);
+  padding: 10px 12px;
+  font-size: 12px;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+
+.contribution-day-tooltip > span {
+  color: var(--chart-tooltip-muted);
+  font-size: 11px;
 }
 
 .section-afterword {
