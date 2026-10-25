@@ -168,6 +168,13 @@ export function SiteChrome() {
     savedReadingStateRef.current = articleSlug
       ? getReadingProgressState(articleSlug)
       : { furthest: 0, position: 0 };
+    const article = articleSlug
+      ? document.querySelector<HTMLElement>(".article")
+      : null;
+    const primaryHeading = document.querySelector<HTMLElement>("main h1");
+    const routeShell = document.querySelector<HTMLElement>(".route-shell");
+    const footer = document.querySelector<HTMLElement>(".site-footer");
+    let previousFooterOpacity = "";
 
     const measure = () => {
       animationFrame = 0;
@@ -178,9 +185,6 @@ export function SiteChrome() {
       );
       const scrollY = Math.max(0, window.scrollY);
       const canScroll = maxScroll > 1;
-      const article = articleSlug
-        ? document.querySelector<HTMLElement>(".article")
-        : null;
       const articleBottomScroll = article
         ? scrollY + article.getBoundingClientRect().bottom - window.innerHeight
         : 0;
@@ -205,10 +209,8 @@ export function SiteChrome() {
         }
       }
 
-      const primaryHeading = document.querySelector<HTMLElement>("main h1");
-      const routeShell = document.querySelector<HTMLElement>(".route-shell");
-      const footer = document.querySelector<HTMLElement>(".site-footer");
       const routeBottom = routeShell?.getBoundingClientRect().bottom;
+      const headingBottom = primaryHeading?.getBoundingClientRect().bottom;
       // The sticky footer sits under the route from page load, so the route edge
       // is the reliable signal for the first visible sliver of the footer.
       const footerRevealDepth = routeBottom === undefined
@@ -220,12 +222,6 @@ export function SiteChrome() {
             Math.max(0, footerRevealDepth / footer.getBoundingClientRect().height),
           )
         : 0;
-
-      // Geometry drives both directions, so the same reveal depth has the same opacity.
-      footer?.style.setProperty(
-        "--footer-content-opacity",
-        footerRevealProgress.toFixed(4),
-      );
 
       const pageProgress = canScroll
         ? Math.min(1, scrollY / maxScroll) * 100
@@ -253,7 +249,7 @@ export function SiteChrome() {
       // Keep the full ruler fixed until its bottom reaches the route edge,
       // then move it with the route while preserving the content gap.
       const indicatorOffset =
-        compactViewport || routeBottom === undefined
+        !articleSlug || compactViewport || routeBottom === undefined
           ? 0
           : Math.min(
               0,
@@ -264,12 +260,18 @@ export function SiteChrome() {
       const nextState = {
         canScroll,
         footerRevealed: footerRevealDepth > 0,
-        hasScrolled: primaryHeading
-          ? primaryHeading.getBoundingClientRect().bottom <= 0
+        hasScrolled: headingBottom !== undefined
+          ? headingBottom <= 0
           : scrollY > 24,
         indicatorOffset,
-        progress: compactViewport ? 0 : readingProgress,
+        progress: articleSlug && !compactViewport ? Math.round(readingProgress) : 0,
       };
+      // Read geometry before writing styles, and leave unchanged values alone.
+      const footerOpacity = footerRevealProgress.toFixed(4);
+      if (footerOpacity !== previousFooterOpacity) {
+        footer?.style.setProperty("--footer-content-opacity", footerOpacity);
+        previousFooterOpacity = footerOpacity;
+      }
       setScrollState((currentState) =>
         currentState.canScroll === nextState.canScroll &&
         currentState.footerRevealed === nextState.footerRevealed &&
@@ -303,7 +305,7 @@ export function SiteChrome() {
         window.cancelAnimationFrame(animationFrame);
       }
     };
-  }, [articleSlug, compactViewport]);
+  }, [articleSlug, compactViewport, pathname]);
 
   const navigateFromPointer = (event: ReactPointerEvent<HTMLElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -397,7 +399,7 @@ export function SiteChrome() {
         >
           <ProgressiveBlur
             backgroundColor="var(--background)"
-            blurAmount="16px"
+            blurAmount="0px"
             height="96px"
             position="top"
           />
@@ -474,7 +476,7 @@ export function SiteChrome() {
       >
         <ProgressiveBlur
           backgroundColor="var(--background)"
-          blurAmount="16px"
+          blurAmount="0px"
           height="96px"
           position="bottom"
         />

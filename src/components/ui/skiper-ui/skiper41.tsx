@@ -28,9 +28,9 @@ const ProgressiveBlur = ({
           ? `linear-gradient(to top, transparent, ${backgroundColor})`
           : `linear-gradient(to bottom, transparent, ${backgroundColor})`,
         maskImage,
-        WebkitBackdropFilter: `blur(${blurAmount})`,
+        WebkitBackdropFilter: blurAmount === "0px" ? undefined : `blur(${blurAmount})`,
         WebkitMaskImage: maskImage,
-        backdropFilter: `blur(${blurAmount})`,
+        backdropFilter: blurAmount === "0px" ? undefined : `blur(${blurAmount})`,
         WebkitUserSelect: "none",
         userSelect: "none",
         visibility: "visible",
