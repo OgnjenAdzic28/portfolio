@@ -8,37 +8,13 @@ const substackOrigin = new URL(substackUrl).origin;
 const maxFeedBytes = 2_000_000;
 const postSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const feedFetchAttempts = 3;
-const liveFeedCacheMilliseconds = 60_000;
+const liveFeedCacheMilliseconds = 10_000;
 export const substackPostsKey = "substack-posts:v1";
 
-export const bundledFallbackPosts: SubstackPost[] = [
-  {
-    slug: "a-signal-is-not-a-guarantee",
-    title: "A signal is not a guarantee",
-    description:
-      "The trouble starts when a narrow result becomes a conclusion about the whole system.",
-    content:
-      '<p>This article is temporarily unavailable here. You can <a href="https://ognjenadzic.substack.com/p/a-signal-is-not-a-guarantee" rel="noopener noreferrer" target="_blank">read it on Substack</a>.</p>',
-    url: "https://ognjenadzic.substack.com/p/a-signal-is-not-a-guarantee",
-    publishedAt: "2026-08-16T09:57:41.000Z",
-    author: "Ognjen Adzic",
-    coverImage:
-      "https://substack-post-media.s3.amazonaws.com/public/images/92dc5fbe-3107-48d6-a1d4-ddad92e27c72_2400x1260.png",
-  },
-  {
-    slug: "ai-makes-learning-more-important",
-    title: "AI makes learning more important",
-    description:
-      "AI can one-shot a convincing demo. Reliable software still requires judgment, verification, and enough knowledge to know when the model is wrong.",
-    content:
-      '<p>This article is temporarily unavailable here. You can <a href="https://ognjenadzic.substack.com/p/ai-makes-learning-more-important" rel="noopener noreferrer" target="_blank">read it on Substack</a>.</p>',
-    url: "https://ognjenadzic.substack.com/p/ai-makes-learning-more-important",
-    publishedAt: "2026-08-09T17:18:43.000Z",
-    author: "Ognjen Adzic",
-    coverImage:
-      "https://substack-post-media.s3.amazonaws.com/public/images/0c5953bb-0214-4421-9e31-7d8ffe7c3dbb_2400x1260.png",
-  },
-];
+type FeedFetchOptions = {
+  attempts?: number;
+  timeoutMilliseconds?: number;
+};
 
 type FeedItem = {
   title?: string;
@@ -295,12 +271,12 @@ function logFeedError(message: string, error: unknown) {
   );
 }
 
-function logFeedAttemptFailure(attempt: number, error: unknown) {
+function logFeedAttemptFailure(attempt: number, attempts: number, error: unknown) {
   console.warn(
     JSON.stringify({
       event: "substack_feed_attempt_failed",
       attempt,
-      attempts: feedFetchAttempts,
+      attempts,
       error: error instanceof Error ? error.message : String(error),
     }),
   );
@@ -323,20 +299,25 @@ function getRetryDelayMilliseconds(response: Response, attempt: number) {
   return attempt * 1_000;
 }
 
-async function fetchFeed() {
+async function fetchFeed({
+  attempts = 1,
+  timeoutMilliseconds = 2_000,
+}: FeedFetchOptions = {}) {
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= feedFetchAttempts; attempt += 1) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
     let retryDelayMilliseconds = attempt * 1_000;
 
     try {
       const response = await fetch(feedUrl, {
         headers: {
           Accept: "application/rss+xml, application/xml;q=0.9",
+          "Cache-Control": "no-cache",
           "User-Agent": "OgnjenPortfolioFeedSync/1.0 (+https://ognjenadzic.com)",
         },
+        cache: "no-store",
         redirect: "manual",
-        signal: AbortSignal.timeout(8_000),
+        signal: AbortSignal.timeout(timeoutMilliseconds),
       });
 
       if (response.ok) {
@@ -349,9 +330,9 @@ async function fetchFeed() {
       lastError = error;
     }
 
-    logFeedAttemptFailure(attempt, lastError);
+    logFeedAttemptFailure(attempt, attempts, lastError);
 
-    if (attempt < feedFetchAttempts) {
+    if (attempt < attempts) {
       await new Promise((resolve) =>
         setTimeout(resolve, retryDelayMilliseconds),
       );
@@ -363,8 +344,8 @@ async function fetchFeed() {
     : new Error("Unable to fetch the Substack feed");
 }
 
-async function loadSubstackFeed() {
-  const response = await fetchFeed();
+async function loadSubstackFeed(options: FeedFetchOptions = {}) {
+  const response = await fetchFeed(options);
   const contentLength = Number(response.headers.get("content-length"));
 
   if (Number.isFinite(contentLength) && contentLength > maxFeedBytes) {
@@ -411,7 +392,10 @@ function getLiveSubstackPosts() {
 
 export async function refreshSubstackPosts(store: KVNamespace) {
   try {
-    const posts = await loadSubstackFeed();
+    const posts = await loadSubstackFeed({
+      attempts: feedFetchAttempts,
+      timeoutMilliseconds: 8_000,
+    });
     const refreshedAt = new Date().toISOString();
 
     await store.put(substackPostsKey, JSON.stringify(posts), {
@@ -436,6 +420,13 @@ export async function refreshSubstackPosts(store: KVNamespace) {
 export async function getSubstackPosts(
   store: KVNamespace,
 ): Promise<SubstackPost[]> {
+  // Check Substack before KV so new posts do not wait for cron or KV propagation.
+  try {
+    return await getLiveSubstackPosts();
+  } catch (error) {
+    logFeedError("Unable to load the live Substack feed", error);
+  }
+
   try {
     const value: unknown = await store.get(substackPostsKey, "json");
 
@@ -455,23 +446,11 @@ export async function getSubstackPosts(
   } catch (error) {
     logFeedError("Unable to read the stored Substack feed", error);
 
-    try {
-      return await getLiveSubstackPosts();
-    } catch (feedError) {
-      logFeedError("Unable to load the live Substack feed", feedError);
-      return bundledFallbackPosts;
-    }
+    return [];
   }
 }
 
 export async function getSubstackPost(slug: string, store: KVNamespace) {
-  try {
-    const posts = await getLiveSubstackPosts();
-    return posts.find((post) => post.slug === slug) ?? null;
-  } catch (error) {
-    logFeedError("Unable to load the live Substack article", error);
-  }
-
   const posts = await getSubstackPosts(store);
 
   return posts.find((post) => post.slug === slug) ?? null;
