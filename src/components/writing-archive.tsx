@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NavigationAudioLink } from "@/components/navigation-audio-link";
+import { AudioLink } from "@/components/audio-link";
 import { ReadingProgressDate } from "@/components/reading-progress-date";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -213,10 +213,9 @@ export function WritingArchive({ posts }: { posts: WritingPost[] }) {
               {index < filteredPosts.length - 1 ? (
                 <span className={styles.divider} aria-hidden="true" />
               ) : null}
-              <NavigationAudioLink
+              <AudioLink
                 className={styles.postLink}
                 href={`/writing/${post.slug}`}
-                transitionType="writing-forward"
               >
                 <h2 className={styles.postTitle}>
                   {highlightText(post.title, normalizedQuery)}
@@ -233,7 +232,7 @@ export function WritingArchive({ posts }: { posts: WritingPost[] }) {
                   />
                   <span className={styles.postSource}>Ognjen Adzic</span>
                 </span>
-              </NavigationAudioLink>
+              </AudioLink>
               {isLatest ? (
                 <span className={styles.latestNote} aria-hidden="true">
                   <svg

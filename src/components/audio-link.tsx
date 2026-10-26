@@ -9,7 +9,6 @@ type AudioLinkProps = ComponentPropsWithRef<"a"> & {
   releaseSound?: SoundName | false;
   sound?: "default" | "home";
   toggleSound?: SoundName | false;
-  viewTransition?: boolean;
 };
 
 function isInternalHref(href: string | undefined) {
@@ -30,7 +29,6 @@ export function AudioLink({
   ref,
   releaseSound,
   toggleSound = "sparkle",
-  viewTransition,
   ...props
 }: AudioLinkProps) {
   const resolvedHoverSound =
@@ -54,7 +52,6 @@ export function AudioLink({
         ref={ref}
         target={target}
         to={href}
-        viewTransition={viewTransition}
         {...props}
       />
     );
