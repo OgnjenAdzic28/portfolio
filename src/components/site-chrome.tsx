@@ -174,6 +174,7 @@ export function SiteChrome() {
     const primaryHeading = document.querySelector<HTMLElement>("main h1");
     const routeShell = document.querySelector<HTMLElement>(".route-shell");
     const footer = document.querySelector<HTMLElement>(".site-footer");
+    const footerContent = document.querySelector<HTMLElement>(".site-footer-inner");
     let previousFooterOpacity = "";
 
     const measure = () => {
@@ -269,7 +270,9 @@ export function SiteChrome() {
       // Read geometry before writing styles, and leave unchanged values alone.
       const footerOpacity = footerRevealProgress.toFixed(4);
       if (footerOpacity !== previousFooterOpacity) {
-        footer?.style.setProperty("--footer-content-opacity", footerOpacity);
+        // Opacity is not inherited. A custom property on the footer invalidated
+        // every descendant's computed style on each reveal frame.
+        if (footerContent) footerContent.style.opacity = footerOpacity;
         previousFooterOpacity = footerOpacity;
       }
       setScrollState((currentState) =>

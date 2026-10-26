@@ -221,23 +221,6 @@ export function SiteFooter({
   return (
     <footer className="site-footer" ref={footerRef}>
       <div className="site-footer-noise" aria-hidden="true" />
-      <svg className="site-footer-noise-defs" aria-hidden="true">
-        <filter id="site-footer-noise-filter">
-          <feTurbulence
-            baseFrequency="0.85"
-            numOctaves="3"
-            result="noise"
-            stitchTiles="stitch"
-            type="fractalNoise"
-          />
-          <feColorMatrix result="mono" type="saturate" values="0" />
-          <feComponentTransfer result="contrast">
-            <feFuncR intercept="-0.2" slope="1.4" type="linear" />
-            <feFuncG intercept="-0.2" slope="1.4" type="linear" />
-            <feFuncB intercept="-0.2" slope="1.4" type="linear" />
-          </feComponentTransfer>
-        </filter>
-      </svg>
 
       <div className="site-footer-inner">
         <header className="site-footer-head">

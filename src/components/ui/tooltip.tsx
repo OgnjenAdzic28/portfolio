@@ -5,9 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { spring } from "@/lib/springs";
 import { fontWeights } from "@/lib/font-weight";
 import { useShape } from "@/lib/shape-context";
 
@@ -35,7 +33,7 @@ function TooltipPortalContainer({
 // Provider
 // ---------------------------------------------------------------------------
 
-const DEFAULT_DELAY = 200;
+const DEFAULT_DELAY = 80;
 
 // Tracks whether an app-level <TooltipProvider> is above us. Each Tooltip
 // only wraps itself in a local primitive Provider when there isn't one —
@@ -45,7 +43,7 @@ const TooltipGroupContext = createContext(false);
 
 interface TooltipProviderProps {
   children: ReactNode;
-  /** Hover delay before tooltips open, in ms. Defaults to 200. */
+  /** Hover delay before tooltips open, in ms. Defaults to 80. */
   delayDuration?: number;
   /** After a tooltip closes, adjacent tooltips opened within this window
    *  skip the hover delay, in ms. Defaults to 300. */
@@ -84,7 +82,7 @@ interface TooltipProps {
   children: React.ReactElement;
   side?: TooltipSide;
   sideOffset?: number;
-  /** Hover delay before this tooltip opens, in ms. Defaults to 200, or to the
+  /** Hover delay before this tooltip opens, in ms. Defaults to 80, or to the
    *  ambient TooltipProvider's delayDuration when one is present. */
   delayDuration?: number;
   className?: string;
@@ -92,23 +90,6 @@ interface TooltipProps {
   forceOpen?: boolean;
   /** Called when the tooltip's internal open state changes (before forceOpen is applied). */
   onOpenChange?: (open: boolean) => void;
-}
-
-// ---------------------------------------------------------------------------
-// Animation helpers
-// ---------------------------------------------------------------------------
-
-function getSlideOffset(side: TooltipSide) {
-  switch (side) {
-    case "top":
-      return { y: 4 };
-    case "bottom":
-      return { y: -4 };
-    case "left":
-      return { x: 4 };
-    case "right":
-      return { x: -4 };
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -131,8 +112,6 @@ function Tooltip({
   const portalContainer = useContext(TooltipPortalContainerContext);
   const hasAmbientProvider = useContext(TooltipGroupContext);
 
-  const slideOffset = getSlideOffset(side);
-
   const tooltip = (
     <TooltipPrimitive.Root
       open={open}
@@ -151,50 +130,14 @@ function Tooltip({
           className="z-50"
         >
           <TooltipPrimitive.Popup
-            render={(props, state) => {
-              const exiting = state.transitionStatus === "ending";
-              const {
-                style: baseStyle,
-                ...rest
-              } = props as React.HTMLAttributes<HTMLDivElement>;
-              // motion.div owns these handlers. Explicitly clear the React-DOM
-              // signatures so they do not conflict with Motion's prop types.
-              const motionProps = {
-                ...rest,
-                onDrag: undefined,
-                onDragStart: undefined,
-                onDragEnd: undefined,
-                onAnimationStart: undefined,
-                onAnimationEnd: undefined,
-                onAnimationIteration: undefined,
-              };
-              return (
-                <motion.div
-                  {...motionProps}
-                  data-slot="tooltip-content"
-                  className={cn(
-                    // Trim recenters the label; the padding bump only applies
-                    // where text-box is supported, keeping the same overall
-                    // height (~26px) as untrimmed browsers.
-                    "bg-foreground text-background text-[12px] px-2 py-1",
-                    "[text-box:trim-both_cap_alphabetic] supports-[text-box:trim-both]:py-2",
-                    shape.bg,
-                    className
-                  )}
-                  style={{
-                    ...(baseStyle as React.CSSProperties | undefined),
-                    fontVariationSettings: fontWeights.medium,
-                  }}
-                  initial={{ opacity: 0, ...slideOffset }}
-                  animate={
-                    exiting
-                      ? { opacity: 0, ...slideOffset }
-                      : { opacity: 1, x: 0, y: 0 }
-                  }
-                  transition={exiting ? spring.fast.exit : spring.fast}
-                />
-              );
-            }}
+            data-slot="tooltip-content"
+            className={cn(
+              "site-tooltip bg-foreground text-background text-[12px] px-2 py-1",
+              "[text-box:trim-both_cap_alphabetic] supports-[text-box:trim-both]:py-2",
+              shape.bg,
+              className,
+            )}
+            style={{ fontVariationSettings: fontWeights.medium }}
           >
             {content}
           </TooltipPrimitive.Popup>

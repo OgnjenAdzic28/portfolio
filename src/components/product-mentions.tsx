@@ -147,7 +147,6 @@ export function ProductMentions({
             {activeItem && position ? (
               <motion.div
                 animate={{
-                  filter: "blur(0px)",
                   opacity: 1,
                   scale: 1,
                   y: 0,
@@ -156,7 +155,6 @@ export function ProductMentions({
                 className="product-preview-card"
                 data-product={activeItem.product}
                 exit={{
-                  filter: reduceMotion ? "blur(0px)" : "blur(3px)",
                   opacity: 0,
                   scale: reduceMotion ? 1 : 0.99,
                   y: reduceMotion ? 0 : -3,
@@ -166,7 +164,6 @@ export function ProductMentions({
                   reduceMotion
                     ? false
                     : {
-                        filter: "blur(6px)",
                         opacity: 0,
                         scale: 0.97,
                         y: -6,
@@ -177,7 +174,7 @@ export function ProductMentions({
                 style={position}
                 transition={{
                   bounce: 0,
-                  duration: reduceMotion ? 0 : 0.3,
+                  duration: reduceMotion ? 0 : 0.16,
                   type: "spring",
                 }}
               >

@@ -11,7 +11,6 @@ import { CharacterSwapText } from "@/components/character-swap-text";
 import { ContributionGraph } from "@/components/contribution-graph";
 import { MediaShelf } from "@/components/media-shelf";
 import { AudioLink } from "@/components/audio-link";
-import { NavigationAudioLink } from "@/components/navigation-audio-link";
 import { ReadingProgressDate } from "@/components/reading-progress-date";
 import {
   emptyContributions,
@@ -308,11 +307,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
             <div className="wide-bleed article-grid">
               {writing.map((post) => (
-                <NavigationAudioLink
+                <AudioLink
                   className="editorial-card article-card"
                   href={`/writing/${post.slug}`}
                   key={post.slug}
-                  transitionType="writing-forward"
                 >
                   <span className="card-copy">
                     <span className="card-title">{post.title}</span>
@@ -327,7 +325,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                       slug={post.slug}
                     />
                   </span>
-                </NavigationAudioLink>
+                </AudioLink>
               ))}
               {emptyWritingSlots.map((slot) => (
                 <span

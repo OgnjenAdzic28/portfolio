@@ -5,14 +5,6 @@ import { Tooltip } from "@/components/ui/tooltip";
 
 type Theme = "light" | "dark";
 
-type ViewTransition = {
-  finished: Promise<void>;
-};
-
-type TransitionDocument = Document & {
-  startViewTransition?: (updateCallback: () => void) => ViewTransition;
-};
-
 const storageKey = "ognjen-theme";
 const themeChangeEvent = "ognjen-theme-change";
 
@@ -81,27 +73,6 @@ function applyTheme(theme: Theme, options: { persist?: boolean } = {}) {
   window.dispatchEvent(new Event(themeChangeEvent));
 }
 
-function applyThemeWithTransition(theme: Theme) {
-  const transitionDocument = document as TransitionDocument;
-
-  if (
-    !transitionDocument.startViewTransition ||
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  ) {
-    applyTheme(theme);
-    return;
-  }
-
-  document.documentElement.dataset.themeTransition = "warp";
-  const transition = transitionDocument.startViewTransition(() => {
-    applyTheme(theme);
-  });
-
-  void transition.finished.finally(() => {
-    delete document.documentElement.dataset.themeTransition;
-  });
-}
-
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
   const nextTheme = theme === "dark" ? "light" : "dark";
@@ -140,7 +111,7 @@ export function ThemeToggle() {
       event.preventDefault();
       const activeTheme = getSnapshot();
       play("toggle");
-      applyThemeWithTransition(activeTheme === "dark" ? "light" : "dark");
+      applyTheme(activeTheme === "dark" ? "light" : "dark");
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -161,7 +132,7 @@ export function ThemeToggle() {
         data-cuelume-hover="tick"
         data-cuelume-toggle="toggle"
         onClick={() => {
-          applyThemeWithTransition(nextTheme);
+          applyTheme(nextTheme);
         }}
       >
         <span className="site-footer-control-icon-wrap theme-toggle-icons">

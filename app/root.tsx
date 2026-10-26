@@ -182,30 +182,11 @@ export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
                 <AudioLink
                   className="not-found-home-link site-footer-control"
                   href="/"
-                  onClick={(event) => {
-                    if (
-                      event.defaultPrevented ||
-                      event.button !== 0 ||
-                      event.metaKey ||
-                      event.ctrlKey ||
-                      event.shiftKey ||
-                      event.altKey
-                    ) {
-                      return;
-                    }
-
-                    document.documentElement.dataset.routeTransition =
-                      "writing-back";
-                    window.setTimeout(() => {
-                      delete document.documentElement.dataset.routeTransition;
-                    }, 700);
-                  }}
                   prefetch="render"
                   pressSound="press"
                   releaseSound="release"
                   sound="home"
                   toggleSound={false}
-                  viewTransition
                 >
                   Back home
                 </AudioLink>
