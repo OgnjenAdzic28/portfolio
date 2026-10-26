@@ -180,6 +180,12 @@ export function SiteChrome() {
     const measure = () => {
       animationFrame = 0;
 
+      // A queued frame can outlive its article during navigation. Its detached
+      // bounds would otherwise overwrite the saved reading position with 100%.
+      if (article && !article.isConnected) {
+        return;
+      }
+
       const maxScroll = Math.max(
         0,
         document.documentElement.scrollHeight - window.innerHeight,
