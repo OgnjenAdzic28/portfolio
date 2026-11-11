@@ -25,10 +25,18 @@ import type { Route } from "./+types/home";
 const projects = [
   {
     description:
-      "A macOS menu bar app that keeps apps and coding agents from stealing focus, and takes back pasted API keys.",
-    href: "https://usedoorman.app",
-    name: "Doorman",
-    tags: ["macOS", "Swift", "Agents"],
+      "A git-native rules layer for AI agents. I've landed CLI diagnostics, editor guides, CI fixes and a bunch of tests.",
+    href: "https://github.com/gnt-ai/gnt",
+    name: "gnt",
+    tags: ["Contributor", "Agents", "TypeScript"],
+    year: "2026",
+  },
+  {
+    description:
+      "A benchmark for agents doing real chores across email, calendar, tasks, memory and approvals.",
+    href: "https://github.com/OgnjenAdzic28/agent-workflow-benchmark",
+    name: "Agent Workflow Benchmark",
+    tags: ["Agents", "Evaluation", "TypeScript"],
     year: "2026",
   },
   {
@@ -49,11 +57,19 @@ const projects = [
   },
   {
     description:
-      "A benchmark suite for agents working across email, calendar, tasks, memory, and approvals.",
-    href: "https://github.com/OgnjenAdzic28/agent-workflow-benchmark",
-    name: "Agent Workflow Benchmark",
-    tags: ["Agents", "Evaluation", "TypeScript"],
-    year: "2026",
+      "Watches FIFA matches, spots when momentum swings, and suggests when to make subs.",
+    href: "https://github.com/OgnjenAdzic28/fifa-momentum-tracker",
+    name: "FIFA Momentum Tracker",
+    tags: ["Machine learning", "Vision", "Sports"],
+    year: "2025",
+  },
+  {
+    description:
+      "A Chrome extension that saves posts from any X profile as JSON or CSV.",
+    href: "https://github.com/OgnjenAdzic28/x-post-scraper-extension",
+    name: "X Post Scraper",
+    tags: ["Chrome extension", "JavaScript"],
+    year: "2025",
   },
 ];
 
@@ -151,7 +167,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 {
                   cover: "/invokeable-banner.webp",
                   description:
-                    "Your customers ask agents to do real work in your product. Invokeable runs those journeys end to end, checks the final state and side effects, and turns each failure into a finding with evidence.",
+                    "People are starting to let agents use products for them. Invokeable runs those flows for real, checks what actually changed, and shows you exactly where things broke.",
                   href: "https://invokeable.com",
                   icon: "/invokeable-icon.svg",
                   label: "Invokeable",
@@ -169,7 +185,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 {
                   cover: "/doorman-banner.webp",
                   description:
-                    "A macOS menu bar app for working next to coding agents. Their windows wait in a lane instead of jumping in front of you, and API keys pasted in the wrong place get taken back.",
+                    "A little Mac app that keeps agents from taking over your screen. Their windows wait their turn, and if you paste an API key somewhere you shouldn't, it takes it back.",
                   href: "https://usedoorman.app",
                   icon: "/doorman-icon.webp",
                   label: "Doorman",
@@ -177,7 +193,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "doorman",
                 },
               ]}
-              trailing=", a Mac app that keeps agent windows out of your way."
+              trailing=", a Mac app that keeps agents from hijacking your screen."
             />
           </p>
           <p className="reveal" style={revealStyle(4)}>
@@ -374,10 +390,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         ref={homeDataTriggerRef}
       >
         <header className="section-heading">
-          <h2>Selected work</h2>
+          <h2>Open source</h2>
           <p>
-            Recent projects where I tested the difficult parts before polishing
-            everything around them.
+            Stuff you can actually read and run. Most of it I built, some of it I
+            help out with.
           </p>
         </header>
 
