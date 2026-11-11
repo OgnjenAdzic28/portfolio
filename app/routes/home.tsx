@@ -55,22 +55,6 @@ const projects = [
     tags: ["Autonomy", "LiDAR", "Tracking"],
     year: "2026",
   },
-  {
-    description:
-      "Watches FIFA matches, spots when momentum swings, and suggests when to make subs.",
-    href: "https://github.com/OgnjenAdzic28/fifa-momentum-tracker",
-    name: "FIFA Momentum Tracker",
-    tags: ["Machine learning", "Vision", "Sports"],
-    year: "2025",
-  },
-  {
-    description:
-      "A Chrome extension that saves posts from any X profile as JSON or CSV.",
-    href: "https://github.com/OgnjenAdzic28/x-post-scraper-extension",
-    name: "X Post Scraper",
-    tags: ["Chrome extension", "JavaScript"],
-    year: "2025",
-  },
 ];
 
 type RevealStyle = CSSProperties & {
@@ -185,7 +169,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 {
                   cover: "/doorman-banner.webp",
                   description:
-                    "A little Mac app that keeps agents from taking over your screen. Their windows wait their turn, and if you paste an API key somewhere you shouldn't, it takes it back.",
+                    "Agents open Chrome, the simulator and dev builds all day, right on top of whatever you're doing. Doorman puts your window back, makes agent windows wait off to the side until you look, and pauses every agent with one shortcut. It even takes back API keys you paste in the wrong place.",
                   href: "https://usedoorman.app",
                   icon: "/doorman-icon.webp",
                   label: "Doorman",
@@ -193,7 +177,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "doorman",
                 },
               ]}
-              trailing=", a Mac app that keeps agents from hijacking your screen."
+              trailing=". My agents kept throwing Chrome and the simulator in front of whatever I was typing, so I made a Mac app that puts my window back and lets their windows wait until I look."
             />
           </p>
           <p className="reveal" style={revealStyle(4)}>
