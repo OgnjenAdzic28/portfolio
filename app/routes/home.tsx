@@ -25,6 +25,22 @@ import type { Route } from "./+types/home";
 const projects = [
   {
     description:
+      "A git-native rules layer for AI agents. I've landed CLI diagnostics, editor guides, CI fixes and a bunch of tests.",
+    href: "https://github.com/gnt-ai/gnt",
+    name: "gnt",
+    tags: ["Contributor", "Agents", "TypeScript"],
+    year: "2026",
+  },
+  {
+    description:
+      "A benchmark for agents doing real chores across email, calendar, tasks, memory and approvals.",
+    href: "https://github.com/OgnjenAdzic28/agent-workflow-benchmark",
+    name: "Agent Workflow Benchmark",
+    tags: ["Agents", "Evaluation", "TypeScript"],
+    year: "2026",
+  },
+  {
+    description:
       "Water, sky, and obstacle segmentation with vessel tracking and radar demos.",
     href: "https://github.com/OgnjenAdzic28/maritime-perception-mvp",
     name: "Maritime Perception MVP",
@@ -38,22 +54,6 @@ const projects = [
     name: "Autonomous Perception Lab",
     tags: ["Autonomy", "LiDAR", "Tracking"],
     year: "2026",
-  },
-  {
-    description:
-      "A benchmark suite for agents working across email, calendar, tasks, memory, and approvals.",
-    href: "https://github.com/OgnjenAdzic28/agent-workflow-benchmark",
-    name: "Agent Workflow Benchmark",
-    tags: ["Agents", "Evaluation", "TypeScript"],
-    year: "2026",
-  },
-  {
-    description:
-      "A computer vision system for detecting momentum shifts and substitution timing in FIFA.",
-    href: "https://github.com/OgnjenAdzic28/fifa-momentum-tracker",
-    name: "FIFA Momentum Tracker",
-    tags: ["Machine learning", "Vision", "Sports"],
-    year: "2025",
   },
 ];
 
@@ -151,7 +151,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 {
                   cover: "/invokeable-banner.webp",
                   description:
-                    "Tests whether AI agents can use a product correctly and safely. It runs important customer journeys, verifies the resulting state and side effects, and turns failures into evidence-backed findings.",
+                    "People are starting to let agents use products for them. Invokeable runs those flows for real, checks what actually changed, and shows you exactly where things broke.",
                   href: "https://invokeable.com",
                   icon: "/invokeable-icon.svg",
                   label: "Invokeable",
@@ -164,7 +164,25 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </p>
           <p className="reveal" style={revealStyle(3)}>
             <ProductMentions
-              leading="I'm also a core contributor to "
+              leading="I'm also shipping "
+              items={[
+                {
+                  cover: "/doorman-banner.webp",
+                  description:
+                    "Agents open browsers and simulators right on top of whatever you're doing. Doorman puts your window back and keeps theirs off to the side until you look.",
+                  href: "https://usedoorman.app",
+                  icon: "/doorman-icon.webp",
+                  label: "Doorman",
+                  meta: ["Free beta", "now"],
+                  product: "doorman",
+                },
+              ]}
+              trailing=". My agents kept throwing windows in front of me while I typed, so I made a Mac app that puts mine back."
+            />
+          </p>
+          <p className="reveal" style={revealStyle(4)}>
+            <ProductMentions
+              leading="I'm a core contributor to "
               items={[
                 {
                   cover: "/gntai-banner.png",
@@ -177,10 +195,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "gntai",
                 },
               ]}
-              trailing=". I help build governance infrastructure for AI agents."
+              trailing=" too, where I help build governance infrastructure for AI agents."
             />
           </p>
-          <p className="reveal" style={revealStyle(4)}>
+          <p className="reveal" style={revealStyle(5)}>
             <ProductMentions
               leading="Before that, I co-founded "
               items={[
@@ -207,7 +225,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               trailing=". They were different products, but the job was similar: find the annoying part people had accepted and make it work better."
             />
           </p>
-          <p className="reveal" style={revealStyle(5)}>
+          <p className="reveal" style={revealStyle(6)}>
             I&apos;ve also been working on perception systems for{" "}
             <AudioLink
               className="editorial-link"
@@ -229,12 +247,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             , where a clean demo is usually the beginning of the work, not proof
             that it is finished.
           </p>
-          <p className="reveal" style={revealStyle(6)}>
+          <p className="reveal" style={revealStyle(7)}>
             I started coding when I was 12. The part I enjoy has not changed: turning
             a vague idea into something useful, then removing everything that gets
             in the way.
           </p>
-          <p className="reveal" style={revealStyle(7)}>
+          <p className="reveal" style={revealStyle(8)}>
             I&apos;m on{" "}
             <AudioLink
               className="editorial-link"
@@ -356,10 +374,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         ref={homeDataTriggerRef}
       >
         <header className="section-heading">
-          <h2>Selected work</h2>
+          <h2>On GitHub</h2>
           <p>
-            Recent projects where I tested the difficult parts before polishing
-            everything around them.
+            Stuff you can actually read and run. Most of it I built, some of it I
+            help out with.
           </p>
         </header>
 

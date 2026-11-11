@@ -11,7 +11,7 @@ type ProductMention = {
   icon: string;
   label: string;
   meta: readonly [string, string];
-  product: "invokeable" | "pingless" | "archistella" | "gntai";
+  product: "invokeable" | "doorman" | "pingless" | "archistella" | "gntai";
 };
 
 type ProductMentionsProps = {
