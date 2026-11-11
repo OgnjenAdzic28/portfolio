@@ -374,7 +374,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         ref={homeDataTriggerRef}
       >
         <header className="section-heading">
-          <h2>Open source</h2>
+          <h2>On GitHub</h2>
           <p>
             Stuff you can actually read and run. Most of it I built, some of it I
             help out with.
