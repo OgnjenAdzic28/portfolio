@@ -21,7 +21,7 @@ import appStylesUrl from "./app.css?url";
 const siteUrl = "https://ognjenadzic.com";
 const siteName = "Ognjen Adzic";
 const description =
-  "Ognjen Adzic builds agent workflows and dependable software. He is currently building Invokeable and previously co-founded Pingless and ArchiStella.";
+  "Ognjen Adzic builds agent workflows and dependable software. He is currently building Invokeable and Doorman, and previously co-founded Pingless and ArchiStella.";
 const appStylesHref = appStylesUrl.replace(/\?t=\d+$/, "");
 const documentInit =
   "try{var s=localStorage.getItem('ognjen-theme');var t=s==='dark'||s==='light'?s:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}";
@@ -65,7 +65,7 @@ export const meta: Route.MetaFunction = () => [
   { name: "author", content: siteName },
   {
     name: "keywords",
-    content: "Ognjen Adzic, AI agents, Invokeable, Pingless, ArchiStella",
+    content: "Ognjen Adzic, AI agents, Invokeable, Doorman, Pingless, ArchiStella",
   },
   { property: "og:title", content: siteName },
   { property: "og:description", content: description },
