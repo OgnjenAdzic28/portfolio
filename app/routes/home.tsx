@@ -169,7 +169,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 {
                   cover: "/doorman-banner.webp",
                   description:
-                    "Agents open Chrome, the simulator and dev builds all day, right on top of whatever you're doing. Doorman puts your window back, makes agent windows wait off to the side until you look, and pauses every agent with one shortcut. It even takes back API keys you paste in the wrong place.",
+                    "Agents open browsers and simulators right on top of whatever you're doing. Doorman puts your window back and keeps theirs off to the side until you look.",
                   href: "https://usedoorman.app",
                   icon: "/doorman-icon.webp",
                   label: "Doorman",
@@ -177,7 +177,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "doorman",
                 },
               ]}
-              trailing=". My agents kept throwing Chrome and the simulator in front of whatever I was typing, so I made a Mac app that puts my window back and lets their windows wait until I look."
+              trailing=". My agents kept throwing windows in front of me while I typed, so I made a Mac app that puts mine back."
             />
           </p>
           <p className="reveal" style={revealStyle(4)}>
