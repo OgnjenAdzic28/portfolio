@@ -29,8 +29,11 @@ function cleanExcerpt(description: string) {
     .trim();
 }
 
+// The home page shows one row of the three-column article grid; the rest live on /writing.
+const homeWritingLimit = 3;
+
 export function toHomeWriting(posts: SubstackPost[]): HomeWritingItem[] {
-  return posts.slice(0, 6).map((post) => ({
+  return posts.slice(0, homeWritingLimit).map((post) => ({
     description: cleanExcerpt(post.description),
     formattedDate: formatPostDate(post.publishedAt),
     publishedAt: post.publishedAt,
