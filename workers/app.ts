@@ -1,5 +1,6 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
 import { cloudflareEnvContext } from "@/lib/cloudflare-context";
+import { refreshLatestPortfolioCommit } from "@/lib/github-latest-commit.server";
 import { refreshSubstackPosts } from "@/lib/substack.server";
 
 const requestHandler = createRequestHandler(
@@ -24,5 +25,6 @@ export default {
 
   async scheduled(_controller, env, ctx) {
     ctx.waitUntil(refreshSubstackPosts(env.PORTFOLIO_WRITING_FEED));
+    ctx.waitUntil(refreshLatestPortfolioCommit(env.PORTFOLIO_WRITING_FEED));
   },
 } satisfies ExportedHandler<Env>;

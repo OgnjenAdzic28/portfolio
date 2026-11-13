@@ -55,10 +55,7 @@ function OASignature() {
         d="M147 15c7 0 13 4 18 9-22-4-48-1-60 10-14 14-14 45-9 70 5 28 24 43 48 42 27-1 41-20 41-48 0-30-9-57-20-74"
         strokeWidth="4.4"
       />
-      <path
-        d="M112 169c26-50 57-109 86-159"
-        strokeWidth="4.2"
-      />
+      <path d="M112 169c26-50 57-109 86-159" strokeWidth="4.2" />
       <path
         d="M145 122c23-42 48-88 66-102 9-7 14-2 12 20-2 22-12 70-7 83 4 13 15 8 28-4 12-12 19-27 21-42"
         strokeWidth="4"
@@ -67,10 +64,7 @@ function OASignature() {
         d="M18 123c72-33 151-53 245-46-3 18-43 26-103 31-58 6-105 13-142 15Z"
         strokeWidth="3.8"
       />
-      <path
-        d="M181 103c69 2 139-13 199-30"
-        strokeWidth="3.8"
-      />
+      <path d="M181 103c69 2 139-13 199-30" strokeWidth="3.8" />
     </svg>
   );
 }
@@ -87,11 +81,17 @@ function formatRelativeTime(value: string) {
   }
 
   if (elapsed < hour) {
-    return relativeTime.format(-Math.max(1, Math.round(elapsed / minute)), "minute");
+    return relativeTime.format(
+      -Math.max(1, Math.round(elapsed / minute)),
+      "minute",
+    );
   }
 
   if (elapsed < day) {
-    return relativeTime.format(-Math.max(1, Math.round(elapsed / hour)), "hour");
+    return relativeTime.format(
+      -Math.max(1, Math.round(elapsed / hour)),
+      "hour",
+    );
   }
 
   if (elapsed < 30 * day) {
@@ -99,10 +99,16 @@ function formatRelativeTime(value: string) {
   }
 
   if (elapsed < 365 * day) {
-    return relativeTime.format(-Math.max(1, Math.round(elapsed / (30 * day))), "month");
+    return relativeTime.format(
+      -Math.max(1, Math.round(elapsed / (30 * day))),
+      "month",
+    );
   }
 
-  return relativeTime.format(-Math.max(1, Math.round(elapsed / (365 * day))), "year");
+  return relativeTime.format(
+    -Math.max(1, Math.round(elapsed / (365 * day))),
+    "year",
+  );
 }
 
 function formatCommitDateTitle(value: string) {
@@ -117,7 +123,22 @@ function formatCommitDateTitle(value: string) {
   }).format(new Date(value));
 }
 
-function LatestCommit({ commit }: { commit: LatestCommitData | null }) {
+function LatestCommit({
+  commit,
+  failed,
+}: {
+  commit: LatestCommitData | null;
+  failed: boolean;
+}) {
+  if (!commit && !failed) {
+    return (
+      <p aria-busy="true" className="site-footer-commit">
+        <CommitIcon />
+        <span>last Portfolio commit</span>
+      </p>
+    );
+  }
+
   if (!commit) {
     return (
       <p className="site-footer-commit">
@@ -164,6 +185,7 @@ export function SiteFooter({
 }) {
   const year = new Date().getFullYear();
   const [resolvedCommit, setResolvedCommit] = useState(latestCommit);
+  const [commitFailed, setCommitFailed] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -184,7 +206,11 @@ export function SiteFooter({
         .querySelector<HTMLElement>(".route-shell")
         ?.getBoundingClientRect().bottom;
 
-      if (requested || routeBottom === undefined || routeBottom >= window.innerHeight) {
+      if (
+        requested ||
+        routeBottom === undefined ||
+        routeBottom >= window.innerHeight
+      ) {
         return;
       }
 
@@ -200,11 +226,17 @@ export function SiteFooter({
         .then((value: unknown) => {
           if (isRecord(value) && isLatestCommitData(value.latestCommit)) {
             setResolvedCommit(value.latestCommit);
+          } else {
+            setCommitFailed(true);
           }
         })
         .catch((error: unknown) => {
           if (!(error instanceof DOMException && error.name === "AbortError")) {
-            console.error("Unable to refresh the latest Portfolio commit", error);
+            console.error(
+              "Unable to refresh the latest Portfolio commit",
+              error,
+            );
+            setCommitFailed(true);
           }
         });
     };
@@ -248,7 +280,9 @@ export function SiteFooter({
                     className="site-footer-link"
                     href={link.href}
                     hoverSound="whisper"
-                    rel={link.href.startsWith("http") ? "me noreferrer" : undefined}
+                    rel={
+                      link.href.startsWith("http") ? "me noreferrer" : undefined
+                    }
                     target={link.href.startsWith("http") ? "_blank" : undefined}
                   >
                     {link.label}
@@ -264,7 +298,10 @@ export function SiteFooter({
             </ul>
           </nav>
 
-          <aside className="site-footer-note" aria-labelledby="footer-note-title">
+          <aside
+            className="site-footer-note"
+            aria-labelledby="footer-note-title"
+          >
             <h2 id="footer-note-title">you made it to the bottom</h2>
             <p>
               I keep changing this site whenever I learn something or spot a
@@ -282,7 +319,7 @@ export function SiteFooter({
         </section>
 
         <div className="site-footer-bottom">
-          <LatestCommit commit={resolvedCommit} />
+          <LatestCommit commit={resolvedCommit} failed={commitFailed} />
 
           <small className="site-footer-meta">
             <span>
