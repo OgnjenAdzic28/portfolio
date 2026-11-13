@@ -1,3 +1,5 @@
+import { substackUrl } from "@/lib/substack";
+
 const isDevelopment = process.env.NODE_ENV === "development";
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -7,6 +9,8 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "img-src 'self' data: https:",
+  // Substack video sources redirect to signed Mux streams.
+  `media-src 'self' ${new URL(substackUrl).origin} https://stream.mux.com`,
   "object-src 'none'",
   "script-src 'self' 'unsafe-inline'" +
     (isDevelopment ? " 'unsafe-eval'" : ""),

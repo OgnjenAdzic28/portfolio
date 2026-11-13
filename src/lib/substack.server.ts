@@ -7,6 +7,8 @@ const feedUrl = `${substackUrl}/feed`;
 const substackOrigin = new URL(substackUrl).origin;
 const maxFeedBytes = 2_000_000;
 const postSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const videoIdPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const feedFetchAttempts = 3;
 const liveFeedCacheMilliseconds = 10_000;
 export const substackPostsKey = "substack-posts:v1";
@@ -76,6 +78,40 @@ function getPostIdentity(item: FeedItem) {
   }
 }
 
+// Substack's feed carries an uploaded video as an empty placeholder holding
+// only its upload id. The publication's /src endpoint redirects to a freshly
+// signed stream, so the id is enough to rebuild a player.
+function getVideoSource(dataAttrs: string | undefined) {
+  try {
+    const { mediaUploadId } = JSON.parse(dataAttrs ?? "") as {
+      mediaUploadId?: unknown;
+    };
+
+    return typeof mediaUploadId === "string" &&
+      videoIdPattern.test(mediaUploadId)
+      ? `${substackOrigin}/api/v1/video/upload/${mediaUploadId}/src?type=mp4`
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function isVideoSource(src: string | undefined) {
+  try {
+    const url = new URL(src ?? "");
+    const id = url.pathname.match(/^\/api\/v1\/video\/upload\/([^/]+)\/src$/)?.[1];
+
+    return (
+      url.origin === substackOrigin &&
+      url.search === "?type=mp4" &&
+      id !== undefined &&
+      videoIdPattern.test(id)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function cleanPostHtml(html: string) {
   return sanitizeHtml(html, {
     allowedTags: [
@@ -113,6 +149,7 @@ function cleanPostHtml(html: string) {
       "tr",
       "u",
       "ul",
+      "video",
     ],
     allowedAttributes: {
       "*": ["class"],
@@ -132,24 +169,45 @@ function cleanPostHtml(html: string) {
       source: ["media", "sizes", "src", "srcset", "type"],
       td: ["colspan", "rowspan"],
       th: ["colspan", "rowspan", "scope"],
+      video: ["controls", "playsinline", "preload", "src"],
     },
     allowedSchemes: ["http", "https", "mailto"],
     allowedSchemesByTag: {
       img: ["https"],
       source: ["https"],
       srcset: ["https"],
+      video: ["https"],
     },
     allowProtocolRelative: false,
     exclusiveFilter(frame) {
+      if (frame.tag === "video") {
+        return !isVideoSource(frame.attribs.src);
+      }
+
       return frame.attribs.class?.split(" ").some((className) =>
         [
           "image-link-expand",
+          "native-video-embed",
           "subscription-widget-wrap-editor",
           "subscription-widget",
         ].includes(className),
       ) ?? false;
     },
     transformTags: {
+      div(tagName, attribs) {
+        const src = attribs.class?.split(" ").includes("native-video-embed")
+          ? getVideoSource(attribs["data-attrs"])
+          : null;
+
+        if (!src) {
+          return { tagName, attribs };
+        }
+
+        return {
+          tagName: "video",
+          attribs: { controls: "", playsinline: "", preload: "metadata", src },
+        };
+      },
       a(tagName, attribs) {
         if (!attribs.href?.startsWith("http")) {
           return { tagName, attribs };
