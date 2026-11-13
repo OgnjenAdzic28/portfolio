@@ -758,7 +758,8 @@ html[data-theme="dark"] .product-mention-icon {
 .article-body figure,
 .article-body pre,
 .article-body table,
-.article-body iframe {
+.article-body iframe,
+.article-body video {
   margin: 1.45em 0;
 }
 
@@ -900,6 +901,15 @@ html[data-theme="dark"] .product-mention-icon {
   min-height: 400px;
   border: 0;
   border-radius: 10px;
+}
+
+.article-body video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto 16 / 9;
+  border-radius: 10px;
+  background: var(--pill);
 }
 
 .article-body hr {

@@ -7,6 +7,7 @@ import Home, { headers as homeHeaders, loader as homeLoader } from "../app/route
 import { headers as writingHeaders } from "../app/routes/writing";
 import { headers as postHeaders } from "../app/routes/writing-post";
 import { cloudflareEnvContext } from "../src/lib/cloudflare-context";
+import { getSecurityHeaders } from "../src/lib/security-headers.server";
 import { getSubstackPost, getSubstackPosts, refreshSubstackPosts, substackPostsKey } from "../src/lib/substack.server";
 
 const savedPost = {
@@ -20,7 +21,7 @@ const savedPost = {
   coverImage: undefined,
 };
 
-function feed(slug = "new-post", title = "Newly published post") {
+function feed(slug = "new-post", title = "Newly published post", content = "<p>Current article</p>") {
   return new Response(`<?xml version="1.0"?>
     <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
       <channel><item>
@@ -28,7 +29,7 @@ function feed(slug = "new-post", title = "Newly published post") {
         <link>https://ognjenadzic.substack.com/p/${slug}</link>
         <description>Current excerpt</description>
         <pubDate>Sun, 25 Oct 2026 10:00:00 GMT</pubDate>
-        <content:encoded><![CDATA[<p>Current article</p>]]></content:encoded>
+        <content:encoded><![CDATA[${content}]]></content:encoded>
       </item></channel>
     </rss>`);
 }
@@ -167,4 +168,43 @@ test("writing pages cannot serve stale document or navigation responses", () => 
   for (const headers of [homeHeaders, writingHeaders, postHeaders]) {
     assert.equal(headers()["Cache-Control"], "no-store");
   }
+});
+
+const videoId = "5befe5ac-19b9-4a61-9413-ee26ec735078";
+const videoSource = `https://ognjenadzic.substack.com/api/v1/video/upload/${videoId}/src?type=mp4`;
+// Verbatim shape of an uploaded video in a Substack RSS item.
+const videoPlaceholder = `<div class="native-video-embed" data-component-name="VideoPlaceholder" data-attrs="{&quot;mediaUploadId&quot;:&quot;${videoId}&quot;,&quot;duration&quot;:null}"></div>`;
+
+test("an uploaded Substack video renders as a playable video", async (t) => {
+  t.mock.method(globalThis, "fetch", async () => feed("video-post", "Video post", `<p>Before</p>${videoPlaceholder}<p>After</p>`));
+
+  const [post] = await getSubstackPosts(store());
+
+  assert.match(post.content, /<p>Before<\/p><video [^>]*><\/video><p>After<\/p>/);
+  assert.match(post.content, new RegExp(`src="${videoSource.replace(/[.?]/g, "\\$&")}"`));
+  assert.match(post.content, /controls/);
+  assert.match(getSecurityHeaders()["Content-Security-Policy"], /media-src 'self' https:\/\/ognjenadzic\.substack\.com https:\/\/stream\.mux\.com/);
+});
+
+test("videos from anywhere else are dropped", async (t) => {
+  const content = [
+    '<div class="native-video-embed" data-attrs="{&quot;mediaUploadId&quot;:&quot;../../account&quot;}"></div>',
+    '<video src="https://example.com/movie.mp4" controls></video>',
+    `<video src="https://ognjenadzic.substack.com/api/v1/video/upload/${videoId}/src?type=mp4&amp;next=x"></video>`,
+    "<p>Text stays</p>",
+  ].join("");
+  t.mock.method(globalThis, "fetch", async () => feed("bad-video", "Bad video", content));
+
+  const [post] = await getSubstackPosts(store());
+
+  assert.equal(post.content, "<p>Text stays</p>");
+});
+
+test("a saved snapshot keeps its video", async (t) => {
+  t.mock.method(globalThis, "fetch", async () => new Response("Unavailable", { status: 503 }));
+  const content = `<video controls playsinline preload="metadata" src="${videoSource}"></video>`;
+
+  const [post] = await getSubstackPosts(store([{ ...savedPost, content }]));
+
+  assert.match(post.content, new RegExp(`<video [^>]*src="${videoSource.replace(/[.?]/g, "\\$&")}"`));
 });
