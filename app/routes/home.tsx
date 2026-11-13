@@ -12,6 +12,7 @@ import { ContributionGraph } from "@/components/contribution-graph";
 import { MediaShelf } from "@/components/media-shelf";
 import { AudioLink } from "@/components/audio-link";
 import { ReadingProgressDate } from "@/components/reading-progress-date";
+import { SectionViewAll } from "@/components/section-view-all";
 import {
   emptyContributions,
   parseHomeData,
@@ -248,9 +249,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             that it is finished.
           </p>
           <p className="reveal" style={revealStyle(7)}>
-            I started coding when I was 12. The part I enjoy has not changed: turning
-            a vague idea into something useful, then removing everything that gets
-            in the way.
+            I started coding when I was 12. The part I enjoy has not changed:
+            turning a vague idea into something useful, then removing everything
+            that gets in the way.
           </p>
           <p className="reveal" style={revealStyle(8)}>
             I&apos;m on{" "}
@@ -315,12 +316,15 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       {writing.length > 0 ? (
         <>
           <section className="editorial-section" id="writing">
-            <header className="section-heading">
-              <h2>Recent writing</h2>
-              <p>
-                I write about problems that keep bothering me until I can
-                explain them without hand-waving.
-              </p>
+            <header className="section-heading section-heading-with-link">
+              <span>
+                <h2>Recent writing</h2>
+                <p>
+                  I write about problems that keep bothering me until I can
+                  explain them without hand-waving.
+                </p>
+              </span>
+              <SectionViewAll href="/writing">View all writing</SectionViewAll>
             </header>
 
             <div className="wide-bleed article-grid">
@@ -332,9 +336,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 >
                   <span className="card-copy">
                     <span className="card-title">{post.title}</span>
-                    <span className="card-description">
-                      {post.description}
-                    </span>
+                    <span className="card-description">{post.description}</span>
                   </span>
                   <span className="card-meta">
                     <ReadingProgressDate
@@ -368,17 +370,18 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </>
       ) : null}
 
-      <section
-        className="editorial-section"
-        id="work"
-        ref={homeDataTriggerRef}
-      >
-        <header className="section-heading">
-          <h2>On GitHub</h2>
-          <p>
-            Stuff you can actually read and run. Most of it I built, some of it I
-            help out with.
-          </p>
+      <section className="editorial-section" id="work" ref={homeDataTriggerRef}>
+        <header className="section-heading section-heading-with-link">
+          <span>
+            <h2>On GitHub</h2>
+            <p>
+              Stuff you can actually read and run. Most of it I built, some of
+              it I help out with.
+            </p>
+          </span>
+          <SectionViewAll external href="https://github.com/OgnjenAdzic28">
+            View all on GitHub
+          </SectionViewAll>
         </header>
 
         <div className="wide-bleed project-grid">

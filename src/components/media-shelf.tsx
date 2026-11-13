@@ -1,9 +1,6 @@
-import type {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  ReactNode,
-} from "react";
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from "react";
 import { AudioLink } from "@/components/audio-link";
+import { SectionViewAll } from "@/components/section-view-all";
 import { Card17 } from "@/components/beste/component/card17";
 import { Card19 } from "@/components/beste/component/card19";
 import { ShelfCoverInteraction } from "@/components/shelf-cover-interaction";
@@ -37,9 +34,7 @@ function getRating(item: ShelfItem): ShelfRating {
 
 function getShelfLinkLabel(item: ShelfItem, includeRating = true) {
   const label = `Open ${item.title} by ${item.creator}`;
-  return includeRating
-    ? `${label}, rated ${getRating(item)} out of 5`
-    : label;
+  return includeRating ? `${label}, rated ${getRating(item)} out of 5` : label;
 }
 
 function PixelRating({ rating }: { rating: ShelfRating }) {
@@ -114,26 +109,15 @@ export function MediaShelf({ items }: { items: readonly ShelfItem[] }) {
 
   return (
     <section className="editorial-section" id="favorites">
-      <header className="section-heading shelf-preview-heading">
+      <header className="section-heading section-heading-with-link">
         <span>
           <h2>Things I like</h2>
           <p>
-            A small mix of books, records, and films I keep coming back to.
-            The rest are on my favorites page.
+            A small mix of books, records, and films I keep coming back to. The
+            rest are on my favorites page.
           </p>
         </span>
-        <AudioLink className="shelf-view-all" href="/favorites">
-          Browse all favorites
-          <svg
-            aria-hidden="true"
-            className="shelf-view-all-icon"
-            fill="currentColor"
-            shapeRendering="crispEdges"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8 2h6v6h-2V4H8V2Zm1 2h3v2H9V4ZM7 6h3v2H7V6ZM5 8h3v2H5V8Zm-2 2h3v3H3v-3Z" />
-          </svg>
-        </AudioLink>
+        <SectionViewAll href="/favorites">Browse all favorites</SectionViewAll>
       </header>
 
       <ul aria-label="A few things I like" className="wide-bleed taste-grid">
@@ -215,7 +199,9 @@ export function FavoriteCollections({
                             <ShelfArtwork item={item} />
                           </span>
                           <span className="favorites-card-copy">
-                            <span className="favorites-title">{item.title}</span>
+                            <span className="favorites-title">
+                              {item.title}
+                            </span>
                             <ShelfMeta item={item} />
                           </span>
                         </span>
