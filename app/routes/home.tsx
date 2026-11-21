@@ -158,13 +158,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               leading="Right now I'm building "
               items={[
                 {
-                  cover: "/invokeable-banner.webp",
-                  description:
-                    "People are starting to let agents use products for them. Invokeable runs those flows for real, checks what actually changed, and shows you exactly where things broke.",
                   href: "https://invokeable.com",
                   icon: "/invokeable-icon.svg",
                   label: "Invokeable",
-                  meta: ["Building", "now"],
                   product: "invokeable",
                 },
               ]}
@@ -176,13 +172,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               leading="I also made "
               items={[
                 {
-                  cover: "/hush-banner.webp",
-                  description:
-                    "The fastest computer use for AI agents. Hush drives any desktop app in the background at 178 ms per action, so ten agents can work at once without touching your mouse.",
                   href: "https://github.com/OgnjenAdzic28/hush",
-                  icon: "/hush-icon.webp",
+                  icon: "/hush-icon.svg",
                   label: "Hush",
-                  meta: ["Open source", "now"],
                   product: "hush",
                 },
               ]}
@@ -194,13 +186,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               leading="And "
               items={[
                 {
-                  cover: "/doorman-banner.webp",
-                  description:
-                    "Agents open browsers and simulators right on top of whatever you're doing. Doorman puts your window back and keeps theirs off to the side until you look.",
                   href: "https://usedoorman.app",
                   icon: "/doorman-icon.webp",
                   label: "Doorman",
-                  meta: ["Free beta", "now"],
                   product: "doorman",
                 },
               ]}
@@ -212,13 +200,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               leading="I'm a core contributor to "
               items={[
                 {
-                  cover: "/gntai-banner.png",
-                  description:
-                    "Rules for AI agents that live in git. You review and merge them like code, and agents check them over MCP.",
                   href: "https://github.com/gnt-ai/gnt",
                   icon: "/gntai-icon.jpg",
                   label: "gnt",
-                  meta: ["Core contributor", "now"],
                   product: "gntai",
                 },
               ]}
@@ -226,27 +210,42 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             />
           </p>
           <p className="reveal" style={revealStyle(6)}>
-            Before that I co-founded Pingless, an agency where we built AI tools
-            and web apps for clients, including the site for the first Maritime
-            Club at UPenn. Then{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://www.pennyone.app"
-              rel="noreferrer"
-              target="_blank"
-            >
-              PennyOne
-            </AudioLink>
-            , an inbox assistant that sorted your email, wrote replies in your
-            voice and waited for your OK on anything important.
+            <ProductMentions
+              leading="Before that I co-founded "
+              items={[
+                {
+                  icon: "/pingless-icon.svg",
+                  label: "Pingless",
+                  product: "pingless",
+                },
+              ]}
+              trailing=", an agency where we built AI tools and web apps for clients, including the site for the first Maritime Club at UPenn."
+            />{" "}
+            <ProductMentions
+              leading="Then "
+              items={[
+                {
+                  href: "https://www.pennyone.app",
+                  icon: "/pennyone-icon.svg",
+                  label: "PennyOne",
+                  product: "pennyone",
+                },
+              ]}
+              trailing=", an inbox assistant that sorted your email, wrote replies in your voice and waited for your OK on anything important."
+            />
           </p>
           <p className="reveal" style={revealStyle(7)}>
-            My first company was ArchiStella, a marketplace where shipping
-            companies buy supplies straight from vendors. I built it at 13,
-            starting on WordPress, and it got to 60 shipping companies, 150+
-            suppliers and 50,000+ products in beta, plus the final round at
-            Techstars Chicago. It ended because suppliers kept taking deals
-            offline to skip our fee.
+            <ProductMentions
+              leading="My first company was "
+              items={[
+                {
+                  icon: "/archistella-icon.svg",
+                  label: "ArchiStella",
+                  product: "archistella",
+                },
+              ]}
+              trailing=", a marketplace where shipping companies buy supplies straight from vendors. I built it at 13, starting on WordPress, and it got to 60 shipping companies, 150+ suppliers and 50,000+ products in beta, plus the final round at Techstars Chicago. It ended because suppliers kept taking deals offline to skip our fee."
+            />
           </p>
           <p className="reveal" style={revealStyle(8)}>
             For fun, I&apos;ve built perception systems for{" "}
