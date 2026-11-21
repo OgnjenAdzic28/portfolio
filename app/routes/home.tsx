@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { Await } from "react-router";
+import { ProductMentions } from "@/components/product-mentions";
 import { CharacterSwapText } from "@/components/character-swap-text";
 import { ContributionGraph } from "@/components/contribution-graph";
 import { MediaShelf } from "@/components/media-shelf";
@@ -153,55 +154,76 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
         <div className="prose-stack">
           <p className="reveal" style={revealStyle(2)}>
-            Right now I&apos;m building{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://invokeable.com"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Invokeable
-            </AudioLink>
-            . It runs agents through your product for real and shows you exactly
-            where they break, so you can make your software agent ready.
+            <ProductMentions
+              leading="Right now I'm building "
+              items={[
+                {
+                  cover: "/invokeable-banner.webp",
+                  description:
+                    "People are starting to let agents use products for them. Invokeable runs those flows for real, checks what actually changed, and shows you exactly where things broke.",
+                  href: "https://invokeable.com",
+                  icon: "/invokeable-icon.svg",
+                  label: "Invokeable",
+                  meta: ["Building", "now"],
+                  product: "invokeable",
+                },
+              ]}
+              trailing=". It runs agents through your product for real and shows you exactly where they break, so you can make your software agent ready."
+            />
           </p>
           <p className="reveal" style={revealStyle(3)}>
-            I also made{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://github.com/OgnjenAdzic28/hush"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Hush
-            </AudioLink>
-            , the fastest computer use for AI agents. It drives any app in the
-            background, so the agent works and your screen stays yours.
+            <ProductMentions
+              leading="I also made "
+              items={[
+                {
+                  cover: "/hush-banner.webp",
+                  description:
+                    "The fastest computer use for AI agents. Hush drives any desktop app in the background at 178 ms per action, so ten agents can work at once without touching your mouse.",
+                  href: "https://github.com/OgnjenAdzic28/hush",
+                  icon: "/hush-icon.webp",
+                  label: "Hush",
+                  meta: ["Open source", "now"],
+                  product: "hush",
+                },
+              ]}
+              trailing=", the fastest computer use for AI agents. It drives any app in the background, so the agent works and your screen stays yours."
+            />
           </p>
           <p className="reveal" style={revealStyle(4)}>
-            And{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://usedoorman.app"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Doorman
-            </AudioLink>
-            , because my agents kept throwing windows in front of me while I was
-            typing. It&apos;s a Mac app that puts mine back.
+            <ProductMentions
+              leading="And "
+              items={[
+                {
+                  cover: "/doorman-banner.webp",
+                  description:
+                    "Agents open browsers and simulators right on top of whatever you're doing. Doorman puts your window back and keeps theirs off to the side until you look.",
+                  href: "https://usedoorman.app",
+                  icon: "/doorman-icon.webp",
+                  label: "Doorman",
+                  meta: ["Free beta", "now"],
+                  product: "doorman",
+                },
+              ]}
+              trailing=", because my agents kept throwing windows in front of me while I was typing. It's a Mac app that puts mine back."
+            />
           </p>
           <p className="reveal" style={revealStyle(5)}>
-            I&apos;m a core contributor to{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://github.com/gnt-ai/gnt"
-              rel="noreferrer"
-              target="_blank"
-            >
-              gnt
-            </AudioLink>{" "}
-            too, a git-native rules layer for AI agents.
+            <ProductMentions
+              leading="I'm a core contributor to "
+              items={[
+                {
+                  cover: "/gntai-banner.png",
+                  description:
+                    "Rules for AI agents that live in git. You review and merge them like code, and agents check them over MCP.",
+                  href: "https://github.com/gnt-ai/gnt",
+                  icon: "/gntai-icon.jpg",
+                  label: "gnt",
+                  meta: ["Core contributor", "now"],
+                  product: "gntai",
+                },
+              ]}
+              trailing=" too, a git-native rules layer for AI agents."
+            />
           </p>
           <p className="reveal" style={revealStyle(6)}>
             Before that I co-founded Pingless, an agency where we built AI tools
