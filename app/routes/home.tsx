@@ -26,6 +26,14 @@ import type { Route } from "./+types/home";
 const projects = [
   {
     description:
+      "The fastest computer use for AI agents. It drives any desktop app in the background at 178 ms per action.",
+    href: "https://github.com/OgnjenAdzic28/hush",
+    name: "Hush",
+    tags: ["Agents", "Computer use", "Rust"],
+    year: "2026",
+  },
+  {
+    description:
       "A git-native rules layer for AI agents. I've landed CLI diagnostics, editor guides, CI fixes and a bunch of tests.",
     href: "https://github.com/gnt-ai/gnt",
     name: "gnt",
@@ -140,14 +148,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <header className="hero-heading reveal" style={revealStyle(1)}>
           <h1 id="intro-title">Hi, I&apos;m Ognjen Adzic</h1>
           <p className="hero-kicker">
-            <CharacterSwapText text="I turn vague ideas into dependable software" />
+            <CharacterSwapText text="I build tools for AI agents" />
           </p>
         </header>
 
         <div className="prose-stack">
           <p className="reveal" style={revealStyle(2)}>
             <ProductMentions
-              leading="Right now, I'm building "
+              leading="Right now I'm building "
               items={[
                 {
                   cover: "/invokeable-banner.webp",
@@ -160,12 +168,25 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "invokeable",
                 },
               ]}
-              trailing=" to make your software agent ready."
+              trailing=". It runs agents through your product for real and shows you exactly where they break, so you can make your software agent ready."
             />
           </p>
           <p className="reveal" style={revealStyle(3)}>
+            I also made{" "}
+            <AudioLink
+              className="editorial-link"
+              href="https://github.com/OgnjenAdzic28/hush"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Hush
+            </AudioLink>
+            , the fastest computer use for AI agents. It drives any app in the
+            background, so the agent works and your screen stays yours.
+          </p>
+          <p className="reveal" style={revealStyle(4)}>
             <ProductMentions
-              leading="I'm also shipping "
+              leading="And "
               items={[
                 {
                   cover: "/doorman-banner.webp",
@@ -178,56 +199,52 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   product: "doorman",
                 },
               ]}
-              trailing=". My agents kept throwing windows in front of me while I typed, so I made a Mac app that puts mine back."
+              trailing=", because my agents kept throwing windows in front of me while I was typing. It's a Mac app that puts mine back."
             />
           </p>
-          <p className="reveal" style={revealStyle(4)}>
+          <p className="reveal" style={revealStyle(5)}>
             <ProductMentions
               leading="I'm a core contributor to "
               items={[
                 {
                   cover: "/gntai-banner.png",
                   description:
-                    "Governance infrastructure for AI agents, with versioned policies, pull request approval, and runtime checks over MCP.",
+                    "Rules for AI agents that live in git. You review and merge them like code, and agents check them over MCP.",
                   href: "https://github.com/gnt-ai/gnt",
                   icon: "/gntai-icon.jpg",
-                  label: "gnt.ai",
+                  label: "gnt",
                   meta: ["Core contributor", "now"],
                   product: "gntai",
                 },
               ]}
-              trailing=" too, where I help build governance infrastructure for AI agents."
-            />
-          </p>
-          <p className="reveal" style={revealStyle(5)}>
-            <ProductMentions
-              leading="Before that, I co-founded "
-              items={[
-                {
-                  cover: "/pingless-banner.png",
-                  description:
-                    "Web, SaaS, and AI applications that actually work, from landing pages to full web products.",
-                  icon: "/pingless-icon.svg",
-                  label: "Pingless",
-                  meta: ["Built", "2025"],
-                  product: "pingless",
-                },
-                {
-                  cover: "/archistella-banner.png",
-                  description:
-                    "A B2B marketplace connecting maritime companies directly with vessel suppliers, distributors, and brand owners.",
-                  icon: "/archistella-icon.svg",
-                  label: "ArchiStella",
-                  meta: ["Built", "2024"],
-                  product: "archistella",
-                },
-              ]}
-              separator={[" and "]}
-              trailing=". They were different products, but the job was similar: find the annoying part people had accepted and make it work better."
+              trailing=" too, a git-native rules layer for AI agents."
             />
           </p>
           <p className="reveal" style={revealStyle(6)}>
-            I&apos;ve also been working on perception systems for{" "}
+            Before that I co-founded Pingless, an agency where we built AI tools
+            and web apps for clients, including the site for the first Maritime
+            Club at UPenn. Then{" "}
+            <AudioLink
+              className="editorial-link"
+              href="https://www.pennyone.app"
+              rel="noreferrer"
+              target="_blank"
+            >
+              PennyOne
+            </AudioLink>
+            , an inbox assistant that sorted your email, wrote replies in your
+            voice and waited for your OK on anything important.
+          </p>
+          <p className="reveal" style={revealStyle(7)}>
+            My first company was ArchiStella, a marketplace where shipping
+            companies buy supplies straight from vendors. I built it at 13,
+            starting on WordPress, and it got to 60 shipping companies, 150+
+            suppliers and 50,000+ products in beta, plus the final round at
+            Techstars Chicago. It ended because suppliers kept taking deals
+            offline to skip our fee.
+          </p>
+          <p className="reveal" style={revealStyle(8)}>
+            For fun, I&apos;ve built perception systems for{" "}
             <AudioLink
               className="editorial-link"
               href="https://github.com/OgnjenAdzic28/maritime-perception-mvp"
@@ -245,15 +262,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             >
               cars
             </AudioLink>
-            , where a clean demo is usually the beginning of the work, not proof
-            that it is finished.
+            .
           </p>
-          <p className="reveal" style={revealStyle(7)}>
-            I started coding when I was 12. The part I enjoy has not changed:
-            turning a vague idea into something useful, then removing everything
-            that gets in the way.
+          <p className="reveal" style={revealStyle(9)}>
+            I started coding at 12 and haven&apos;t really stopped.
           </p>
-          <p className="reveal" style={revealStyle(8)}>
+          <p className="reveal" style={revealStyle(10)}>
             I&apos;m on{" "}
             <AudioLink
               className="editorial-link"
