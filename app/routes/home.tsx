@@ -337,10 +337,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <header className="section-heading section-heading-with-link">
               <span>
                 <h2>Recent writing</h2>
-                <p>
-                  I write about problems that keep bothering me until I can
-                  explain them without hand-waving.
-                </p>
               </span>
               <SectionViewAll href="/writing">View all writing</SectionViewAll>
             </header>
@@ -381,10 +377,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               </p>
             ) : null}
           </section>
-
-          <p className="section-bridge">
-            Writing gives me room to think. Code is less polite about bad ideas.
-          </p>
         </>
       ) : null}
 
@@ -438,10 +430,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <div className="wide-bleed contribution-panel">
               <div className="contribution-heatmap" />
             </div>
-            <p className="section-afterword">
-              GitHub can count changes. It cannot tell when deleting ten lines
-              was the most useful part of the day.
-            </p>
           </section>
         }
       >
@@ -466,11 +454,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   />
                 </div>
               ) : null}
-
-              <p className="section-afterword">
-                GitHub can count changes. It cannot tell when deleting ten lines
-                was the most useful part of the day.
-              </p>
             </section>
           )}
         </Await>
