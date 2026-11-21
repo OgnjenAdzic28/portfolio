@@ -172,17 +172,22 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             />
           </p>
           <p className="reveal" style={revealStyle(3)}>
-            I also made{" "}
-            <AudioLink
-              className="editorial-link"
-              href="https://github.com/OgnjenAdzic28/hush"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Hush
-            </AudioLink>
-            , the fastest computer use for AI agents. It drives any app in the
-            background, so the agent works and your screen stays yours.
+            <ProductMentions
+              leading="I also made "
+              items={[
+                {
+                  cover: "/hush-banner.webp",
+                  description:
+                    "The fastest computer use for AI agents. Hush drives any desktop app in the background at 178 ms per action, so ten agents can work at once without touching your mouse.",
+                  href: "https://github.com/OgnjenAdzic28/hush",
+                  icon: "/hush-icon.webp",
+                  label: "Hush",
+                  meta: ["Open source", "now"],
+                  product: "hush",
+                },
+              ]}
+              trailing=", the fastest computer use for AI agents. It drives any app in the background, so the agent works and your screen stays yours."
+            />
           </p>
           <p className="reveal" style={revealStyle(4)}>
             <ProductMentions
