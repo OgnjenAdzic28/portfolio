@@ -6,8 +6,12 @@ type Grid = {
 };
 
 type Pointer = {
-  /** Horizontal pointer position across the canvas, 0 to 1. */
+  /** Pointer position across the canvas, 0 to 1 on each axis. */
   x: number;
+  y: number;
+  /** Recent pointer movement, 0 when still and up to 1 when swept fast. */
+  energy: number;
+  inside: boolean;
 };
 
 type Put = (
@@ -96,7 +100,7 @@ function AsciiCanvas({
     let width = 0;
     let height = 0;
     let palette = readPalette(canvas);
-    let pointer: Pointer | null = null;
+    const pointerState: Pointer = { energy: 0, inside: false, x: 0.5, y: 0.5 };
     let frame = 0;
     let lastFrame = 0;
     let visible = false;
@@ -122,6 +126,10 @@ function AsciiCanvas({
         bucket.ch.length = 0;
       }
 
+      // Movement energy fades over about a second after the pointer stops.
+      pointerState.energy *= 0.93;
+      const pointer =
+        pointerState.inside || pointerState.energy > 0.01 ? pointerState : null;
       render(grid, time, put, pointer);
 
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -201,15 +209,39 @@ function AsciiCanvas({
     const onPointerMove = (event: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
 
-      if (event.clientY < rect.top || event.clientY > rect.bottom) {
+      const inside =
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom &&
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right;
+
+      if (!inside) {
+        pointerState.inside = false;
         return;
       }
 
-      pointer = { x: clamp01((event.clientX - rect.left) / rect.width) };
+      const x = clamp01((event.clientX - rect.left) / rect.width);
+      const y = clamp01((event.clientY - rect.top) / rect.height);
+
+      if (pointerState.inside) {
+        const travel = Math.hypot(
+          (x - pointerState.x) * rect.width,
+          (y - pointerState.y) * rect.height,
+        );
+        pointerState.energy = Math.min(1, pointerState.energy + travel / 160);
+      }
+
+      pointerState.x = x;
+      pointerState.y = y;
+      pointerState.inside = true;
+
+      if (!frame) {
+        drawNow();
+      }
     };
 
     const onPointerLeave = () => {
-      pointer = null;
+      pointerState.inside = false;
     };
 
     const resizeObserver = new ResizeObserver(resize);
@@ -250,33 +282,95 @@ function AsciiCanvas({
   return <canvas aria-hidden="true" className={className} ref={canvasRef} />;
 }
 
-// The sea is drawn side-on as layered swells: small, faint and slow near
-// the horizon, tall, bright and quicker up front. Each nearer layer hides the
-// one behind it, which is what makes the motion read as rolling water.
-const seaLayers = 7;
-// The line sits high in the cell with "-" and low with "_", which keeps
-// curves smooth without the dotted look of finer glyph steps.
-const surfaceChars = ["-", "_"];
+// The sea is a field of wave lines in perspective: short, faint chop near
+// the horizon and long, bright swells up front, each nearer line hiding the
+// ones behind it. Every line mixes waves travelling in both directions, so
+// crests swell and sink in place the way water bobs, instead of one fixed
+// profile sliding sideways like scrolling terrain.
+type SeaLayer = {
+  alpha: number;
+  amplitude: number;
+  base: number;
+  speed: number;
+  steepness: number;
+  wavelength: number;
+};
+
+const seaLayerCount = 9;
+const seaLayers: SeaLayer[] = Array.from(
+  { length: seaLayerCount },
+  (_, index) => {
+    const depth = index / (seaLayerCount - 1);
+
+    return {
+      alpha: 0.24 + 0.62 * depth,
+      amplitude: 0.4 + 2.4 * Math.pow(depth, 1.5),
+      base: 0.1 + 0.8 * Math.pow(depth, 1.35),
+      speed: 1.6 + 4.4 * depth,
+      steepness: 0.35 + 0.45 * depth,
+      wavelength: 14 + 46 * depth,
+    };
+  },
+);
+
+// Per line: a main wave, a slightly shorter one running the other way (the
+// pair makes crests rise and fall in place), and a long slow swell.
+const swellComponents = [
+  { phase: 0, share: 0.55, speed: 1, stretch: 1 },
+  { phase: 1.1, share: 0.32, speed: -0.85, stretch: 0.77 },
+  { phase: 2.3, share: 0.13, speed: 0.45, stretch: 2.6 },
+];
 
 let seaCells: {
   alpha: Float32Array;
   char: string[];
   glint: Uint8Array;
 } | null = null;
+let surface = new Float32Array(0);
 let glintCenter = 0.62;
 
-function swellHeight(col: number, layer: number, time: number) {
-  const depth = layer / (seaLayers - 1);
-  const wavelength = 16 + 64 * depth;
-  const speed = 2.5 + 8 * depth;
-  const theta = ((col - time * speed) / wavelength) * Math.PI * 2 + layer * 1.7;
-  // Raising the sine to a power sharpens crests and flattens troughs.
-  const crest = Math.pow((Math.sin(theta) + 1) / 2, 1.7);
-  const swell = Math.sin(
-    ((col + time * speed * 0.4) / (wavelength * 2.9)) * Math.PI * 2 + layer,
-  );
+function gerstnerSurface(
+  layer: SeaLayer,
+  index: number,
+  cols: number,
+  time: number,
+) {
+  if (surface.length !== cols + 2) {
+    surface = new Float32Array(cols + 2);
+  }
 
-  return { crest, height: crest * 2 - 1 + swell * 0.45 };
+  surface.fill(Number.NEGATIVE_INFINITY);
+
+  // Each water particle moves in a circle; sampling particles densely and
+  // keeping the highest one per column traces the visible surface.
+  for (let u = -layer.wavelength; u < cols + layer.wavelength; u += 0.25) {
+    let x = u;
+    let height = 0;
+
+    for (const component of swellComponents) {
+      const k = (Math.PI * 2) / (layer.wavelength * component.stretch);
+      const theta =
+        k * (u - layer.speed * component.speed * time) +
+        component.phase +
+        index * 1.9;
+      x -= ((layer.steepness * component.share) / k) * Math.sin(theta);
+      height += component.share * Math.cos(theta);
+    }
+
+    const col = Math.round(x) + 1;
+
+    if (col >= 0 && col < surface.length && height > surface[col]) {
+      surface[col] = height;
+    }
+  }
+
+  for (let col = 1; col < surface.length; col += 1) {
+    if (surface[col] === Number.NEGATIVE_INFINITY) {
+      surface[col] = surface[col - 1];
+    }
+  }
+
+  return surface;
 }
 
 const renderSea: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
@@ -314,51 +408,86 @@ const renderSea: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
 
   // The reflected light path eases toward the pointer, like a low sun
   // following you along the shore.
-  glintCenter += ((pointer?.x ?? 0.62) - glintCenter) * 0.025;
+  glintCenter += ((pointer?.x ?? 0.62) - glintCenter) * 0.03;
+  const pointerCol = pointer ? pointer.x * cols : 0;
+  const pointerRow = pointer ? pointer.y * rows : 0;
+  const ys = new Float32Array(cols + 2);
 
-  for (let layer = 0; layer < seaLayers; layer += 1) {
-    const depth = layer / (seaLayers - 1);
-    const baseRow = rows * (0.16 + 0.66 * Math.pow(depth, 1.15));
-    const amplitude = 0.35 + 2.3 * Math.pow(depth, 1.4);
-    const lineAlpha = 0.22 + 0.62 * depth;
-    const glintWidth = 0.03 + 0.09 * depth;
-    const surface: number[] = [];
+  seaLayers.forEach((layer, index) => {
+    const heights = gerstnerSurface(layer, index, cols, time);
+    const baseRow = rows * layer.base;
+    const glintWidth = 0.03 + 0.012 * index;
 
-    for (let col = -1; col <= cols; col += 1) {
-      surface.push(baseRow - swellHeight(col, layer, time).height * amplitude);
+    for (let col = 0; col < cols + 2; col += 1) {
+      let y = baseRow - heights[col] * layer.amplitude;
+
+      // Moving the pointer through the water sends ripples out from it,
+      // strongest on the swell nearest the pointer.
+      if (pointer && pointer.energy > 0.01) {
+        const distance = Math.abs(col - 1 - pointerCol);
+        const nearness = Math.exp(-(((baseRow - pointerRow) / 5) ** 2));
+        y -=
+          pointer.energy *
+          nearness *
+          2.2 *
+          Math.exp(-distance / 14) *
+          Math.cos(distance * 0.5 - time * 9);
+      }
+
+      ys[col] = y;
     }
 
     for (let col = 0; col < cols; col += 1) {
-      const y = surface[col + 1];
+      const y = ys[col + 1];
       const row = Math.floor(y);
-      const { crest } = swellHeight(col, layer, time);
+      const slope = (ys[col + 2] - ys[col]) / 2;
+      const crest = (heights[col + 1] + 1) / 2;
+      const whitecap = crest > 0.9 && layer.steepness > 0.55;
 
-      // Water below this swell's surface covers the layers behind it.
+      // The water body: brightest just under the surface and on the face
+      // turned to the light, with streaks that travel with the swell.
       for (let below = row + 1; below < rows; below += 1) {
-        const fall = below - y;
-        const speck =
-          hash(col, below, Math.floor(time * 0.8 + hash(col, below) * 4)) >
-          0.93 - depth * 0.04;
+        const depth = below - y;
+        const facing = clamp01(0.55 + slope * 0.5);
+        const shade =
+          (0.35 + 0.65 * facing) *
+          Math.exp(-depth / (0.9 + layer.amplitude * 0.45));
+        const streak = Math.sin(
+          (col - time * layer.speed * 0.6) * 0.33 +
+            below * 2.1 +
+            Math.sin(col * 0.06 + below) * 1.6,
+        );
+        const char =
+          shade > 0.5
+            ? streak > 0.15
+              ? "~"
+              : "-"
+            : shade > 0.28
+              ? streak > 0.35
+                ? "-"
+                : "."
+              : shade > 0.12 && streak > 0.65
+                ? "."
+                : " ";
         set(
           col,
           below,
-          speck ? "." : " ",
-          speck ? lineAlpha * 0.35 * Math.max(0, 1 - fall / 6) : 0,
+          char,
+          char === " " ? 0 : layer.alpha * (0.2 + 0.55 * shade),
         );
       }
 
-      // Connect steep faces so the line never breaks into dots.
-      const left = surface[col];
-      const right = surface[col + 2];
-      const slope = right - left;
+      // Steep faces get a joined edge so the crest line never breaks up.
+      const left = ys[col];
+      const right = ys[col + 2];
 
-      if (Math.abs(slope) > 1.6) {
+      if (Math.abs(right - left) > 1.6) {
         const from = Math.ceil(Math.min(left, right, y));
         const to = Math.floor(Math.max(left, right, y));
 
         for (let fill = from; fill < to; fill += 1) {
           if (fill !== row) {
-            set(col, fill, slope < 0 ? "/" : "\\", lineAlpha * 0.8);
+            set(col, fill, right < left ? "/" : "\\", layer.alpha * 0.85);
           }
         }
       }
@@ -367,35 +496,26 @@ const renderSea: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
       const glintPath = Math.exp(-offset * offset);
       const sparkle = hash(
         col,
-        layer,
-        Math.floor(time * 4 + hash(col, layer) * 4),
+        index,
+        Math.floor(time * 4 + hash(col, index) * 4),
       );
-      const lit = glintPath > 0.3 && sparkle > 0.35 && depth > 0.15;
-      const frac = y - row;
-      let char = surfaceChars[frac < 0.55 ? 0 : 1];
-
-      if (crest > 0.82 && char === "-") {
-        char = "~";
-      }
+      const lit = index > 0 && glintPath > 0.3 && sparkle > 0.35;
+      const char = whitecap ? "~" : y - row < 0.55 ? "-" : "_";
 
       set(
         col,
         row,
         lit && sparkle > 0.94 ? "*" : char,
-        lit ? 0.6 + 0.4 * glintPath : lineAlpha * (0.75 + crest * 0.25),
-        lit ? 1 : 0,
+        whitecap || lit ? 0.75 + 0.25 * glintPath : layer.alpha,
+        whitecap || lit ? 1 : 0,
       );
 
-      // Foam lifts off the nearest crests.
-      if (
-        depth > 0.5 &&
-        crest > 0.94 &&
-        hash(col, layer, Math.floor(time * 3)) > 0.55
-      ) {
-        set(col, row - 1, hash(col, row) > 0.5 ? "." : "'", 0.7 * depth, 1);
+      // Spray lifts off the tallest crests.
+      if (whitecap && hash(col, index, Math.floor(time * 3)) > 0.45) {
+        set(col, row - 1, hash(col, row) > 0.5 ? "." : "'", 0.65, 1);
       }
     }
-  }
+  });
 
   for (let index = 0; index < size; index += 1) {
     if (cells.alpha[index] > 0) {
@@ -410,8 +530,11 @@ const renderSea: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
   }
 };
 
-const renderSeabed: AsciiRenderer = ({ cols, rows }, time, put) => {
+const renderSeabed: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
   const sandTops: number[] = [];
+  const pointerCol = pointer ? pointer.x * cols : -1000;
+  const pointerRow = pointer ? pointer.y * rows : -1000;
+  const presence = pointer?.inside ? 1 : 0;
 
   for (let col = 0; col < cols; col += 1) {
     const dune =
@@ -444,7 +567,15 @@ const renderSeabed: AsciiRenderer = ({ cols, rows }, time, put) => {
         Math.sin(
           col * 0.16 + Math.sin(col * 0.045 + time * 0.35) * 2.2 + time * 0.42,
         ) + Math.sin(col * 0.09 - time * 0.31 + row * 0.7);
-      const caustic = Math.pow(clamp01(1 - Math.abs(band) * 0.9), 3);
+      // Hovering casts a soft pool of light on the sand.
+      const spotlight =
+        presence *
+        Math.exp(
+          -((col - pointerCol) ** 2) / 90 - (row - pointerRow) ** 2 / 20,
+        );
+      const caustic = clamp01(
+        Math.pow(clamp01(1 - Math.abs(band) * 0.9), 3) + spotlight * 0.8,
+      );
       const depth = row - top;
       const ripple = Math.sin(
         col * 0.6 + row * 1.9 + Math.sin(col * 0.08) * 2.4,
@@ -494,7 +625,12 @@ const renderSeabed: AsciiRenderer = ({ cols, rows }, time, put) => {
         Math.sin(time * 0.75 + col * 0.37 + segment * 0.45) *
           0.2 *
           Math.pow(segment, 1.1) +
-        Math.sin(time * 0.22 + col * 0.013) * 0.14 * segment;
+        Math.sin(time * 0.22 + col * 0.013) * 0.14 * segment +
+        // Blades lean away from the pointer and shiver when it sweeps by.
+        Math.sign(col - pointerCol) *
+          Math.exp(-Math.abs(col - pointerCol) / 7) *
+          (presence * 0.3 + (pointer?.energy ?? 0) * 0.5) *
+          segment;
       const delta = bend - previous;
       previous = bend;
       const char =
@@ -511,6 +647,22 @@ const renderSeabed: AsciiRenderer = ({ cols, rows }, time, put) => {
         char,
         (0.62 - (segment / stalkHeight) * 0.3) * (0.7 + hash(col, 9) * 0.3),
       );
+    }
+  }
+
+  // A quick sweep shakes a few bubbles loose under the pointer.
+  if (pointer && pointer.energy > 0.15) {
+    for (let index = 0; index < 4; index += 1) {
+      const progress = fract(time * 0.8 + index / 4);
+      const col = Math.round(
+        pointerCol + (hash(index, 21) - 0.5) * 6 + Math.sin(progress * 9) * 1.2,
+      );
+      const row = Math.round(pointerRow - progress * 6);
+      const char = progress < 0.35 ? "." : progress < 0.7 ? "o" : "O";
+
+      if (row >= 0 && col >= 0 && col < cols) {
+        put(col, row, char, pointer.energy * (1 - progress) * 0.9, true);
+      }
     }
   }
 
