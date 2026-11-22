@@ -53,15 +53,14 @@ function clamp01(value: number) {
   return value < 0 ? 0 : value > 1 ? 1 : value;
 }
 
-function smoothstep(edge0: number, edge1: number, value: number) {
-  const t = clamp01((value - edge0) / (edge1 - edge0));
-  return t * t * (3 - 2 * t);
-}
-
 function readPalette(element: HTMLElement) {
   const styles = getComputedStyle(element);
 
+  const boost = Number.parseFloat(styles.getPropertyValue("--ocean-boost"));
+
   return {
+    // Light backgrounds need denser marks to read as clearly as dark ones.
+    boost: Number.isFinite(boost) ? boost : 1,
     glint: styles.getPropertyValue("--ocean-glint").trim() || "#0e8fb0",
     ink: styles.getPropertyValue("--ocean-ink").trim() || "#3c6e88",
   };
@@ -104,7 +103,7 @@ function AsciiCanvas({
     const start = performance.now();
 
     const put: Put = (col, row, char, alpha, glint = false) => {
-      const step = Math.round(clamp01(alpha) * ALPHA_STEPS);
+      const step = Math.round(clamp01(alpha * palette.boost) * ALPHA_STEPS);
 
       if (step === 0 || char === " ") {
         return;
@@ -251,75 +250,161 @@ function AsciiCanvas({
   return <canvas aria-hidden="true" className={className} ref={canvasRef} />;
 }
 
-// Four travelling swells, from the long groundswell to short chop. Their
-// directions differ so crests cross instead of marching in lockstep.
-const swells = [
-  { amplitude: 1, kx: 0.22, ky: 1, phase: 0, speed: 0.85 },
-  { amplitude: 0.6, kx: -0.5, ky: 1.4, phase: 1.3, speed: 1.05 },
-  { amplitude: 0.34, kx: 1.15, ky: 2.3, phase: 2.1, speed: 1.55 },
-  { amplitude: 0.18, kx: -2.1, ky: 3.6, phase: 0.7, speed: 2.2 },
-];
-const swellTotal = swells.reduce((sum, swell) => sum + swell.amplitude, 0);
-const seaRamp = [" ", ".", ".", "-", "-", "~", "~", "=", "≈"];
+// The sea is drawn side-on as layered swells: small, faint and slow near
+// the horizon, tall, bright and quicker up front. Each nearer layer hides the
+// one behind it, which is what makes the motion read as rolling water.
+const seaLayers = 7;
+// The line sits high in the cell with "-" and low with "_", which keeps
+// curves smooth without the dotted look of finer glyph steps.
+const surfaceChars = ["-", "_"];
 
-let glintCenter = 0.5;
+let seaCells: {
+  alpha: Float32Array;
+  char: string[];
+  glint: Uint8Array;
+} | null = null;
+let glintCenter = 0.62;
+
+function swellHeight(col: number, layer: number, time: number) {
+  const depth = layer / (seaLayers - 1);
+  const wavelength = 16 + 64 * depth;
+  const speed = 2.5 + 8 * depth;
+  const theta = ((col - time * speed) / wavelength) * Math.PI * 2 + layer * 1.7;
+  // Raising the sine to a power sharpens crests and flattens troughs.
+  const crest = Math.pow((Math.sin(theta) + 1) / 2, 1.7);
+  const swell = Math.sin(
+    ((col + time * speed * 0.4) / (wavelength * 2.9)) * Math.PI * 2 + layer,
+  );
+
+  return { crest, height: crest * 2 - 1 + swell * 0.45 };
+}
 
 const renderSea: AsciiRenderer = ({ cols, rows }, time, put, pointer) => {
+  const size = cols * rows;
+
+  if (!seaCells || seaCells.char.length !== size) {
+    seaCells = {
+      alpha: new Float32Array(size),
+      char: new Array<string>(size),
+      glint: new Uint8Array(size),
+    };
+  }
+
+  const cells = seaCells;
+  cells.alpha.fill(0);
+  cells.char.fill(" ");
+  cells.glint.fill(0);
+
+  const set = (
+    col: number,
+    row: number,
+    char: string,
+    alpha: number,
+    glint = 0,
+  ) => {
+    if (row < 0 || row >= rows || col < 0 || col >= cols) {
+      return;
+    }
+
+    const index = row * cols + col;
+    cells.char[index] = char;
+    cells.alpha[index] = alpha;
+    cells.glint[index] = glint;
+  };
+
   // The reflected light path eases toward the pointer, like a low sun
   // following you along the shore.
-  glintCenter += ((pointer?.x ?? 0.5) - glintCenter) * 0.025;
+  glintCenter += ((pointer?.x ?? 0.62) - glintCenter) * 0.025;
 
-  for (let row = 0; row < rows; row += 1) {
-    const depth = rows > 1 ? row / (rows - 1) : 1;
-    const perspective = 1 / (0.14 + depth * 0.86);
-    const worldY = perspective * 5.5;
-    const spread = 3 + perspective * 4;
-    const nearness = 0.22 + 0.78 * Math.pow(depth, 0.85);
-    const glintWidth = 0.025 + 0.11 * depth;
+  for (let layer = 0; layer < seaLayers; layer += 1) {
+    const depth = layer / (seaLayers - 1);
+    const baseRow = rows * (0.16 + 0.66 * Math.pow(depth, 1.15));
+    const amplitude = 0.35 + 2.3 * Math.pow(depth, 1.4);
+    const lineAlpha = 0.22 + 0.62 * depth;
+    const glintWidth = 0.03 + 0.09 * depth;
+    const surface: number[] = [];
+
+    for (let col = -1; col <= cols; col += 1) {
+      surface.push(baseRow - swellHeight(col, layer, time).height * amplitude);
+    }
 
     for (let col = 0; col < cols; col += 1) {
-      const u = col / cols - 0.5;
-      const worldX = u * spread;
-      let heightValue = 0;
-      let slope = 0;
+      const y = surface[col + 1];
+      const row = Math.floor(y);
+      const { crest } = swellHeight(col, layer, time);
 
-      for (const swell of swells) {
-        const angle =
-          swell.kx * worldX +
-          swell.ky * worldY +
-          swell.speed * time +
-          swell.phase;
-        heightValue += swell.amplitude * Math.sin(angle);
-        slope += swell.amplitude * swell.ky * Math.cos(angle);
+      // Water below this swell's surface covers the layers behind it.
+      for (let below = row + 1; below < rows; below += 1) {
+        const fall = below - y;
+        const speck =
+          hash(col, below, Math.floor(time * 0.8 + hash(col, below) * 4)) >
+          0.93 - depth * 0.04;
+        set(
+          col,
+          below,
+          speck ? "." : " ",
+          speck ? lineAlpha * 0.35 * Math.max(0, 1 - fall / 6) : 0,
+        );
       }
 
-      const wave = heightValue / swellTotal;
-      const light = clamp01(0.5 + wave * 0.55 - slope * 0.06);
+      // Connect steep faces so the line never breaks into dots.
+      const left = surface[col];
+      const right = surface[col + 2];
+      const slope = right - left;
+
+      if (Math.abs(slope) > 1.6) {
+        const from = Math.ceil(Math.min(left, right, y));
+        const to = Math.floor(Math.max(left, right, y));
+
+        for (let fill = from; fill < to; fill += 1) {
+          if (fill !== row) {
+            set(col, fill, slope < 0 ? "/" : "\\", lineAlpha * 0.8);
+          }
+        }
+      }
+
       const offset = (col / cols - glintCenter) / glintWidth;
       const glintPath = Math.exp(-offset * offset);
-      const crest = smoothstep(0.5, 0.95, light);
-      const sparkle = hash(col, row, Math.floor(time * 5 + hash(col, row) * 5));
+      const sparkle = hash(
+        col,
+        layer,
+        Math.floor(time * 4 + hash(col, layer) * 4),
+      );
+      const lit = glintPath > 0.3 && sparkle > 0.35 && depth > 0.15;
+      const frac = y - row;
+      let char = surfaceChars[frac < 0.55 ? 0 : 1];
 
-      if (glintPath * (0.3 + crest) > 0.5 && sparkle > 0.5) {
-        put(
-          col,
-          row,
-          depth < 0.35 ? "-" : sparkle > 0.9 ? "*" : "+",
-          (0.55 + 0.45 * glintPath) * (0.45 + 0.55 * nearness),
-          true,
-        );
-        continue;
+      if (crest > 0.82 && char === "-") {
+        char = "~";
       }
 
-      const level = Math.min(
-        seaRamp.length - 1,
-        Math.floor(light * (seaRamp.length - 0.01) * (0.72 + 0.3 * depth)),
-      );
-      put(
+      set(
         col,
         row,
-        seaRamp[level],
-        (0.16 + 0.56 * light) * nearness + glintPath * crest * 0.2,
+        lit && sparkle > 0.94 ? "*" : char,
+        lit ? 0.6 + 0.4 * glintPath : lineAlpha * (0.75 + crest * 0.25),
+        lit ? 1 : 0,
+      );
+
+      // Foam lifts off the nearest crests.
+      if (
+        depth > 0.5 &&
+        crest > 0.94 &&
+        hash(col, layer, Math.floor(time * 3)) > 0.55
+      ) {
+        set(col, row - 1, hash(col, row) > 0.5 ? "." : "'", 0.7 * depth, 1);
+      }
+    }
+  }
+
+  for (let index = 0; index < size; index += 1) {
+    if (cells.alpha[index] > 0) {
+      put(
+        index % cols,
+        Math.floor(index / cols),
+        cells.char[index],
+        cells.alpha[index],
+        cells.glint[index] === 1,
       );
     }
   }
