@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { Await } from "react-router";
+import { AsciiSea } from "@/components/ascii-ocean";
 import { ProductMentions } from "@/components/product-mentions";
 import { CharacterSwapText } from "@/components/character-swap-text";
 import { ContributionGraph } from "@/components/contribution-graph";
@@ -144,6 +145,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="site-shell page-reveal-root home-reveal-root" id="top">
+      <AsciiSea />
       <section className="hero editorial-section" aria-labelledby="intro-title">
         <header className="hero-heading reveal" style={revealStyle(1)}>
           <h1 id="intro-title">Hi, I&apos;m Ognjen Adzic</h1>
