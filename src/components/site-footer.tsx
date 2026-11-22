@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AsciiSeabed } from "@/components/ascii-ocean";
 import { AudioLink } from "@/components/audio-link";
 import { AudioToggle } from "@/components/audio-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -336,6 +337,8 @@ export function SiteFooter({
           </small>
         </div>
       </div>
+
+      <AsciiSeabed />
     </footer>
   );
 }
